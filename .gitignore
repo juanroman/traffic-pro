@@ -1,6 +1,34 @@
+# Secrets: the Google Routes API key lives only in Secrets.plist (template: ios/Secrets.example.plist)
 Secrets.plist
+*.secret
+*.secrets
+.env
+.env.*
+!.env.example
+
+# Signing and App Store Connect credentials
+*.p8
+*.p12
+*.pem
+*.key
+*.cer
+*.certSigningRequest
+*.mobileprovision
+*.provisionprofile
+AuthKey_*.p8
+GoogleService-Info.plist
+
+# Build output and archives (archives/IPAs embed Secrets.plist)
 .build/
-xcuserdata/
+.swiftpm/
 DerivedData/
+*.xcarchive
+*.ipa
+*.dSYM/
+*.dSYM.zip
+
+# Per-user and tooling state
+xcuserdata/
+*.xcuserstate
 .DS_Store
 .claude/

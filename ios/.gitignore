@@ -4,5 +4,5 @@ xcuserdata/
 *.xcuserstate
 .swiftpm/
 
-# Google Routes API key (the repo is public; never commit this). See README.
+# Google Routes API key; never commit this. See README.
 TrafficPro/TrafficPro/Secrets.plist
