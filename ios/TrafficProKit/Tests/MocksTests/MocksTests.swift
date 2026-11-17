@@ -5,11 +5,10 @@ import Testing
 @testable import Mocks
 
 struct MocksTests {
-  /// `fixtures/sample-config.json` is the contract shared with api/ and web/.
-  @Test func sampleDataMatchesTheSharedFixture() throws {
-    var url = URL(fileURLWithPath: #filePath)
-    for _ in 0..<5 { url.deleteLastPathComponent() }
-    url.appendPathComponent("fixtures/sample-config.json")
+  /// `Resources/sample-config.json` pins the on-disk JSON shape;
+  /// `SampleData.config` must stay equal to it.
+  @Test func sampleDataMatchesTheFixture() throws {
+    let url = try #require(Bundle.module.url(forResource: "sample-config", withExtension: "json"))
     let fixture = try JSONDecoder().decode(Config.self, from: Data(contentsOf: url))
     #expect(fixture == SampleData.config)
     #expect(fixture.validate().isEmpty)

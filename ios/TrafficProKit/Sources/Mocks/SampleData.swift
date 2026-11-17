@@ -1,8 +1,8 @@
 import Domain
 
 /// Seed data for previews and the in-memory services. Kept equal to
-/// `fixtures/sample-config.json` by a contract test, so it can't drift from
-/// what the API/web actually exchange.
+/// `Tests/MocksTests/Resources/sample-config.json` by a test, so it can't drift from
+/// the on-disk JSON shape.
 public enum SampleData {
   public static let work = NamedPoint(label: "Work", lat: 19.4284, lng: -99.1677)
   public static let home = NamedPoint(label: "Home", lat: 19.5095, lng: -99.2383)

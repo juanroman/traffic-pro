@@ -21,7 +21,9 @@ let package = Package(
     .target(name: "Platform", dependencies: ["Domain"], swiftSettings: strict),
     .target(name: "Features", dependencies: ["Domain", "Mocks"], swiftSettings: strict),
     .testTarget(name: "DomainTests", dependencies: ["Domain"], swiftSettings: strict),
-    .testTarget(name: "MocksTests", dependencies: ["Mocks", "Domain"], swiftSettings: strict),
+    .testTarget(
+      name: "MocksTests", dependencies: ["Mocks", "Domain"],
+      resources: [.copy("Resources/sample-config.json")], swiftSettings: strict),
     .testTarget(
       name: "PlatformTests", dependencies: ["Platform", "Domain", "Mocks"], swiftSettings: strict),
     .testTarget(

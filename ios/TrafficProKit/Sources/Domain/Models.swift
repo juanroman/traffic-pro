@@ -1,5 +1,5 @@
-/// Mirrors `api/app/config_models.py`. The JSON keys are identical, so no
-/// key-mapping is needed; `fixtures/sample-config.json` is the shared contract.
+/// The JSON keys are identical to the property names, so no key-mapping is needed;
+/// `Tests/MocksTests/Resources/sample-config.json` pins the on-disk shape.
 
 public struct LatLng: Codable, Hashable, Sendable {
   public var lat: Double
