@@ -77,11 +77,16 @@ stage_tests() { # $1 = unit | ui
     unit) target=TrafficProTests ;;
     ui) target=TrafficProUITests ;;
   esac
+  # No -quiet here: the per-test lines are how you see progress (and which test is slow or stuck).
+  # A test that hangs is failed by the timeouts below instead of stalling the whole job.
   echo "--- app $1 tests (xcodebuild) ---"
   # shellcheck disable=SC2046
   xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" \
     -destination "$DESTINATION" -derivedDataPath "$DERIVED_DATA" \
-    -only-testing:"$target" $(result_bundle_args "$1") -quiet
+    -test-timeouts-enabled YES -default-test-execution-time-allowance 120 \
+    -maximum-test-execution-time-allowance 300 \
+    -only-testing:"$target" $(result_bundle_args "$1") 2>&1 \
+    | grep --line-buffered -v 'IDELaunchParametersSnapshot\|IDETestOperationsObserverDebug'
 }
 
 case "${1:-all}" in

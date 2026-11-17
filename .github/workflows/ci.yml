@@ -46,7 +46,7 @@ jobs:
   app:
     name: App (build, unit tests, UI tests)
     runs-on: xcode-27
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Select Xcode
@@ -55,13 +55,15 @@ jobs:
         id: build
         run: ios/check.sh build
       - name: Unit tests
+        timeout-minutes: 15
         run: ios/check.sh unit
       # Runs even when the unit tests failed, so one run shows every failing stage.
       - name: UI tests
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        timeout-minutes: 40
         run: ios/check.sh ui
       - name: Upload test results
-        if: ${{ failure() }}
+        if: ${{ !success() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: xcresult
