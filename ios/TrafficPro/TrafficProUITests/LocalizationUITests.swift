@@ -10,10 +10,10 @@ final class LocalizationUITests: XCTestCase {
 
   private func launchInSpanish() -> XCUIApplication {
     let app = XCUIApplication()
-    app.launchArguments = [
-      "-AppleLanguages", "(es-MX)", "-AppleLocale", "es_MX",
-      "-mock-services", "-mock-location", "work",
-    ]
+    app.launchArguments =
+      LaunchArguments.base + [
+        "-AppleLanguages", "(es-MX)", "-AppleLocale", "es_MX", "-mock-location", "work",
+      ]
     app.launch()
     return app
   }

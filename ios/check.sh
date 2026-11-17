@@ -6,7 +6,12 @@
 #   ios/check.sh package package tests (warnings are errors)
 #   ios/check.sh build   app build-for-testing on a simulator
 #   ios/check.sh unit    app unit tests (needs `build` first)
-#   ios/check.sh ui      app UI tests (needs `build` first)
+#   ios/check.sh boot-sim / wait-sim
+#                        start booting the simulator in the background / wait until it is ready
+#                        (CI boots it while the build artifact downloads)
+#   ios/check.sh ui [Class ...]
+#                        app UI tests (needs `build` first); optionally only the given
+#                        UI test classes, which is how CI shards them across jobs
 #
 # CI runs the stages as separate steps so a failure says which stage broke.
 # Set RESULTS_DIR to keep an .xcresult bundle per xcodebuild stage (CI uploads them on failure).
@@ -27,6 +32,24 @@ result_bundle_args() { # $1 = stage name
     rm -rf "${RESULTS_DIR:?}/$1.xcresult" # xcodebuild refuses to overwrite a bundle
     echo "-resultBundlePath" "$RESULTS_DIR/$1.xcresult"
   fi
+}
+
+simulator_udid() { # the name alone is ambiguous across runtimes, so look it up by OS
+  xcrun simctl list devices available "iOS ${SIM_OS}" | grep "${SIM_NAME} (" \
+    | grep -oE '[0-9A-F]{8}(-[0-9A-F]{4}){3}-[0-9A-F]{12}' | head -1
+}
+
+stage_boot_sim() {
+  local udid
+  udid="$(simulator_udid)"
+  [[ -n "$udid" ]] || { echo "no ${SIM_NAME} simulator for iOS ${SIM_OS}" >&2; exit 1; }
+  echo "--- booting ${SIM_NAME} (iOS ${SIM_OS}) ---"
+  xcrun simctl boot "$udid" 2>&1 || true # already booted is fine
+}
+
+stage_wait_sim() {
+  echo "--- waiting for the simulator ---"
+  xcrun simctl bootstatus "$(simulator_udid)" -b
 }
 
 stage_lint() {
@@ -71,30 +94,47 @@ stage_build() {
     $(result_bundle_args build) -quiet
 }
 
-stage_tests() { # $1 = unit | ui
-  local target
-  case "$1" in
+stage_tests() { # $1 = unit | ui; remaining args = test classes (ui only)
+  local kind="$1" target only=()
+  shift
+  case "$kind" in
     unit) target=TrafficProTests ;;
     ui) target=TrafficProUITests ;;
   esac
+  if (($# > 0)); then
+    for class in "$@"; do only+=("-only-testing:$target/$class"); done
+  else
+    only=("-only-testing:$target")
+  fi
+  # Run from the .xctestrun that `build` produced, so CI shards need only the build products.
+  local xctestrun
+  xctestrun="$(ls "$DERIVED_DATA"/Build/Products/*.xctestrun 2>/dev/null | head -1)"
+  if [[ -z "$xctestrun" ]]; then
+    echo "no .xctestrun under $DERIVED_DATA/Build/Products; run \`ios/check.sh build\` first" >&2
+    exit 1
+  fi
   # No -quiet here: the per-test lines are how you see progress (and which test is slow or stuck).
   # A test that hangs is failed by the timeouts below instead of stalling the whole job.
-  echo "--- app $1 tests (xcodebuild) ---"
+  echo "--- app $kind tests (xcodebuild) ---"
   # shellcheck disable=SC2046
-  xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" \
-    -destination "$DESTINATION" -derivedDataPath "$DERIVED_DATA" \
+  xcodebuild test-without-building -xctestrun "$xctestrun" -destination "$DESTINATION" \
     -test-timeouts-enabled YES -default-test-execution-time-allowance 120 \
     -maximum-test-execution-time-allowance 300 \
-    -only-testing:"$target" $(result_bundle_args "$1") 2>&1 \
+    "${only[@]}" $(result_bundle_args "$kind") 2>&1 \
     | grep --line-buffered -v 'IDELaunchParametersSnapshot\|IDETestOperationsObserverDebug'
 }
 
 case "${1:-all}" in
   lint) stage_lint ;;
+  boot-sim) stage_boot_sim ;;
+  wait-sim) stage_wait_sim ;;
   package) stage_package ;;
   build) stage_build ;;
   unit) stage_tests unit ;;
-  ui) stage_tests ui ;;
+  ui)
+    shift
+    stage_tests ui "$@"
+    ;;
   all)
     stage_lint
     stage_package
@@ -104,7 +144,7 @@ case "${1:-all}" in
     echo "iOS checks passed."
     ;;
   *)
-    echo "usage: ios/check.sh [all|lint|package|build|unit|ui]" >&2
+    echo "usage: ios/check.sh [all|lint|package|build|unit|ui|boot-sim|wait-sim]" >&2
     exit 2
     ;;
 esac

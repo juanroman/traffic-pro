@@ -46,7 +46,7 @@ final class ReorderUITests: XCTestCase {
 
   private func launch() -> XCUIApplication {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services"]
+    app.launchArguments = LaunchArguments.base
     app.launch()
     XCTAssertTrue(app.buttons["home-more"].waitForExistence(timeout: 10))
     return app

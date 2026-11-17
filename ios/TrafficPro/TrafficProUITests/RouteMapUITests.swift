@@ -9,7 +9,7 @@ final class RouteMapUITests: XCTestCase {
   @MainActor
   func testAddDragAndRemoveAViaPointOnTheMap() throws {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services"]
+    app.launchArguments = LaunchArguments.base
     app.launch()
     app.openCommute("Work to Home")
     app.expandCommuteSheet()
@@ -53,7 +53,7 @@ final class RouteMapUITests: XCTestCase {
   @MainActor
   func testEditViaPointsFullScreenAndComeBack() throws {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services"]
+    app.launchArguments = LaunchArguments.base
     app.launch()
     app.openCommute("Work to Home")
     app.expandCommuteSheet()
@@ -86,7 +86,7 @@ final class RouteMapUITests: XCTestCase {
   @MainActor
   func testFullScreenKeepsTheZoomedViewAndStillZooms() throws {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services"]
+    app.launchArguments = LaunchArguments.base
     app.launch()
     app.openCommute("Work to Home")
     app.expandCommuteSheet()

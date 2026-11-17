@@ -23,10 +23,14 @@ struct TrafficProApp: App {
   /// `-mock-services` (UI tests) swaps everything for offline, in-memory, seeded
   /// doubles so each run starts from a clean slate; there the user's location is
   /// `-mock-location home|work|far` (default: location denied, so no prompt appears) and
-  /// `-mock-location-prompt` makes the permission still undecided.
+  /// `-mock-location-prompt` makes the permission still undecided. `-no-animations` (UI tests)
+  /// turns UIKit animations off so XCTest's idle detection can't stall on a leaked animation.
   init() {
     let arguments = CommandLine.arguments
     let useMocks = arguments.contains("-mock-services")
+    if arguments.contains("-no-animations") {
+      UIView.setAnimationsEnabled(false)
+    }
 
     let configRepository: any ConfigRepository =
       useMocks ? InMemoryConfigRepository() : Self.fileRepository()

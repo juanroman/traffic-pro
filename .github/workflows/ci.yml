@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 env:
-  # Xcode 27.2 and the iOS 27.2 simulator exist only on the preview `xcode-27` runner image
+  # Xcode 27.2 and the iOS 27.2 simulator exist only on the `xcode-27` runner image
   # (its default Xcode is 27.1, so each job selects 27.2 below).
   XCODE_APP: /Applications/Xcode_27.2.app
   RESULTS_DIR: ${{ github.workspace }}/results
@@ -43,29 +43,84 @@ jobs:
         run: sudo xcode-select -s "$XCODE_APP" && xcodebuild -version
       - run: ios/check.sh package
 
-  app:
-    name: App (build, unit tests, UI tests)
+  # Builds the app and its tests once; the unit and UI jobs only run what this produces.
+  build:
+    name: Build for testing
     runs-on: xcode-27
-    timeout-minutes: 60
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Select Xcode
         run: sudo xcode-select -s "$XCODE_APP" && xcodebuild -version
-      - name: Build for testing
-        id: build
-        run: ios/check.sh build
-      - name: Unit tests
-        timeout-minutes: 15
-        run: ios/check.sh unit
-      # Runs even when the unit tests failed, so one run shows every failing stage.
-      - name: UI tests
-        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
-        timeout-minutes: 40
-        run: ios/check.sh ui
-      - name: Upload test results
-        if: ${{ !success() }}
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      - run: ios/check.sh build
+      # tar keeps the executable bits that upload-artifact would drop.
+      - name: Pack build products
+        run: tar -C ios/build/DerivedData -cf products.tar Build/Products
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: xcresult
+          name: build-products
+          path: products.tar
+          retention-days: 1
+          compression-level: 0
+
+  unit:
+    name: Unit tests
+    needs: build
+    runs-on: xcode-27
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Select Xcode
+        run: sudo xcode-select -s "$XCODE_APP" && xcodebuild -version
+      # Boot now so it is ready by the time the artifact has downloaded.
+      - run: ios/check.sh boot-sim
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: build-products
+      - name: Unpack build products
+        run: mkdir -p ios/build/DerivedData && tar -C ios/build/DerivedData -xf products.tar
+      - run: ios/check.sh wait-sim
+      - run: ios/check.sh unit
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: ${{ !success() }}
+        with:
+          name: xcresult-unit
+          path: results/
+          retention-days: 7
+
+  # UI tests are ~90% of the test time, so they run as three parallel shards, balanced by the
+  # measured local duration of each class (~180 s per shard). Add a class to the lightest shard.
+  ui:
+    name: UI tests (${{ matrix.shard }})
+    needs: build
+    runs-on: xcode-27
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false # one failing shard must not hide the other two
+      matrix:
+        include:
+          - shard: shard 1
+            classes: HomeUITests NewCommuteUITests
+          - shard: shard 2
+            classes: TrafficProUITests CommuteMapUITests
+          - shard: shard 3
+            classes: RouteMapUITests HomeLocationUITests ReorderUITests LocalizationUITests
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Select Xcode
+        run: sudo xcode-select -s "$XCODE_APP" && xcodebuild -version
+      - run: ios/check.sh boot-sim
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: build-products
+      - name: Unpack build products
+        run: mkdir -p ios/build/DerivedData && tar -C ios/build/DerivedData -xf products.tar
+      - run: ios/check.sh wait-sim
+      - name: Run UI tests
+        run: ios/check.sh ui ${{ matrix.classes }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: ${{ !success() }}
+        with:
+          name: xcresult-ui-${{ strategy.job-index }}
           path: results/
           retention-days: 7

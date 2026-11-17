@@ -49,6 +49,10 @@
   bindings).
 - UI tests use `app.expandCommuteSheet()`, `app.openCommute(name)` and
   `chooseFromHomeMenu("home-add"|"home-manage")`. Known gap: no test for the empty-state button.
+- UI tests launch with `-mock-services -no-animations` (`LaunchArguments.base`). Without
+  `-no-animations`, a system menu or keyboard can leave an animation XCTest never sees finish, and
+  every later action waits 60 s for idle. It never happened locally, but on the CI runner it
+  stretched the UI tests from ~9 to 38+ minutes and killed tests by timeout.
 - Flaky UI test: rerun it alone several times and fix the cause (alerts attached to a `Section`
   inside a `List` were unreliable).
 - Reverting a hack with `git checkout <file>` also discards real uncommitted edits in that file.

@@ -12,7 +12,7 @@ final class HomeLocationUITests: XCTestCase {
   /// `place`.
   private func launchUndecided(at place: String = "work") -> XCUIApplication {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services", "-mock-location", place, "-mock-location-prompt"]
+    app.launchArguments = LaunchArguments.base + ["-mock-location", place, "-mock-location-prompt"]
     app.launch()
     return app
   }
@@ -74,7 +74,7 @@ final class HomeLocationUITests: XCTestCase {
 
   func testARefusalIsExplainedInManageCommutesWithAWayToSettings() throws {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services"]  // location denied
+    app.launchArguments = LaunchArguments.base  // location denied
     app.launch()
     app.chooseFromHomeMenu("home-manage")
 
