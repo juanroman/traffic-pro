@@ -4,7 +4,7 @@ Personal project. The FINDEP rules in the global CLAUDE.md (Azure DevOps, Work I
 `#ID:` commit format, ADO PRs) do NOT apply here.
 
 ## Workflow
-- GitHub repo `juanroman/traffic-pro` (remote not added yet while setup is local). Never push to
+- GitHub repo `juanroman/traffic-pro`. Never push to
   `main`: one `feature/...` branch and one GitHub PR per slice, plain commit messages, merge with
   `gh pr merge --merge`.
 - Git identity is repo-local: Juan Roman Escamilla <68346610+juanroman@users.noreply.github.com>.
