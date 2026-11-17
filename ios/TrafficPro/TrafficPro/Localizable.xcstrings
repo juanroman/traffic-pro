@@ -298,13 +298,13 @@
         }
       }
     },
-    "Add your Google API key: copy ios/Secrets.example.plist to ios/RoutesETA/RoutesETA/Secrets.plist and set GOOGLE_ROUTES_API_KEY." : {
+    "Add your Google API key: copy ios/Secrets.example.plist to ios/TrafficPro/TrafficPro/Secrets.plist and set GOOGLE_ROUTES_API_KEY." : {
       "extractionState" : "manual",
       "localizations" : {
         "es-MX" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agrega tu clave de API de Google: copia ios/Secrets.example.plist a ios/RoutesETA/RoutesETA/Secrets.plist y define GOOGLE_ROUTES_API_KEY."
+            "value" : "Agrega tu clave de API de Google: copia ios/Secrets.example.plist a ios/TrafficPro/TrafficPro/Secrets.plist y define GOOGLE_ROUTES_API_KEY."
           }
         }
       }

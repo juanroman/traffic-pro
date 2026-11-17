@@ -7,7 +7,7 @@ import Testing
 struct FileRouteLineCacheTests {
   private func makeURL() -> URL {
     FileManager.default.temporaryDirectory
-      .appending(path: "routes-eta-tests-\(UUID().uuidString)", directoryHint: .isDirectory)
+      .appending(path: "traffic-pro-tests-\(UUID().uuidString)", directoryHint: .isDirectory)
       .appending(path: "route-lines.json", directoryHint: .notDirectory)
   }
 

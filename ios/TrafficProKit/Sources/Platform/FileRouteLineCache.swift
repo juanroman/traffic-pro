@@ -34,13 +34,13 @@ public actor FileRouteLineCache: RouteLineCache {
     self.capacity = max(capacity, 1)
   }
 
-  /// `Application Support/RoutesETA/route-lines.json`, next to `config.json`.
+  /// `Application Support/TrafficPro/route-lines.json`, next to `config.json`.
   public static func defaultURL() throws -> URL {
     try FileManager.default
       .url(
         for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true
       )
-      .appending(path: "RoutesETA", directoryHint: .isDirectory)
+      .appending(path: "TrafficPro", directoryHint: .isDirectory)
       .appending(path: "route-lines.json", directoryHint: .notDirectory)
   }
 

@@ -1,6 +1,6 @@
 import XCTest
 
-final class RoutesETAUITests: XCTestCase {
+final class TrafficProUITests: XCTestCase {
   override func setUpWithError() throws {
     continueAfterFailure = false
   }

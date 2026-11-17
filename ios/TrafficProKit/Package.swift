@@ -6,7 +6,7 @@ import PackageDescription
 let strict: [SwiftSetting] = [.treatAllWarnings(as: .error)]
 
 let package = Package(
-  name: "RoutesETAKit",
+  name: "TrafficProKit",
   platforms: [.iOS("27.2"), .watchOS(.v27), .macOS(.v27)],
   products: [
     .library(name: "Domain", targets: ["Domain"]),

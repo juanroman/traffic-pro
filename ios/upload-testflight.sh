@@ -22,9 +22,9 @@ cat > "$WORK/ExportOptions.plist" <<PLIST
 </dict></plist>
 PLIST
 
-xcodebuild -project RoutesETA/RoutesETA.xcodeproj -scheme RoutesETA -configuration Release \
-  -destination 'generic/platform=iOS' -archivePath "$WORK/RoutesETA.xcarchive" \
+xcodebuild -project TrafficPro/TrafficPro.xcodeproj -scheme TrafficPro -configuration Release \
+  -destination 'generic/platform=iOS' -archivePath "$WORK/TrafficPro.xcarchive" \
   CURRENT_PROJECT_VERSION="$BUILD" -allowProvisioningUpdates archive -quiet
-xcodebuild -exportArchive -archivePath "$WORK/RoutesETA.xcarchive" -exportPath "$WORK/export" \
+xcodebuild -exportArchive -archivePath "$WORK/TrafficPro.xcarchive" -exportPath "$WORK/export" \
   -exportOptionsPlist "$WORK/ExportOptions.plist" -allowProvisioningUpdates
 echo "Uploaded build $BUILD"

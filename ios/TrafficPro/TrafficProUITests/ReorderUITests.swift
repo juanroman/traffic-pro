@@ -1,7 +1,7 @@
 import XCTest
 
 /// Drag-to-reorder of commutes and routes, in their own class to keep
-/// `RoutesETAUITests` under the type-length lint.
+/// `TrafficProUITests` under the type-length lint.
 @MainActor
 final class ReorderUITests: XCTestCase {
   override func setUpWithError() throws {

@@ -18,7 +18,7 @@ private struct Catalog: Decodable {
   let strings: [String: Entry]
 }
 
-/// Guards the hand-maintained string catalogs. The UI lives in the `RoutesETAKit` package, whose
+/// Guards the hand-maintained string catalogs. The UI lives in the `TrafficProKit` package, whose
 /// strings Xcode does not extract into the app's catalog, so nothing else notices a missing
 /// translation or a placeholder that was dropped or reordered in one.
 struct LocalizationCatalogTests {
@@ -27,7 +27,7 @@ struct LocalizationCatalogTests {
   private static func load(_ name: String) throws -> Catalog {
     // The catalogs are compiled into .strings files in the app bundle, so read the sources.
     let folder = URL(filePath: #filePath).deletingLastPathComponent()
-      .deletingLastPathComponent().appending(path: "RoutesETA")
+      .deletingLastPathComponent().appending(path: "TrafficPro")
     let data = try Data(contentsOf: folder.appending(path: name))
     return try JSONDecoder().decode(Catalog.self, from: data)
   }

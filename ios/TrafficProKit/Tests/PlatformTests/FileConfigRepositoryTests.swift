@@ -7,7 +7,7 @@ import Testing
 struct FileConfigRepositoryTests {
   private func makeURL() -> URL {
     FileManager.default.temporaryDirectory
-      .appending(path: "routes-eta-tests-\(UUID().uuidString)", directoryHint: .isDirectory)
+      .appending(path: "traffic-pro-tests-\(UUID().uuidString)", directoryHint: .isDirectory)
       .appending(path: "config.json", directoryHint: .notDirectory)
   }
 

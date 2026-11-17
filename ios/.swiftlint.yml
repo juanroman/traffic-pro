@@ -1,9 +1,9 @@
 included:
-  - RoutesETAKit/Sources
-  - RoutesETAKit/Tests
-  - RoutesETA/RoutesETA
-  - RoutesETA/RoutesETATests
-  - RoutesETA/RoutesETAUITests
+  - TrafficProKit/Sources
+  - TrafficProKit/Tests
+  - TrafficPro/TrafficPro
+  - TrafficPro/TrafficProTests
+  - TrafficPro/TrafficProUITests
 excluded:
   - "**/.build"
 disabled_rules:

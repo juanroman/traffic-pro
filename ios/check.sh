@@ -6,14 +6,14 @@ cd "$(dirname "$0")"
 
 SIM_NAME="${SIM_NAME:-iPhone 18 Pro}"
 SIM_OS="${SIM_OS:-27.2}" # several runtimes are installed; the name alone is ambiguous
-SWIFT_DIRS=(RoutesETAKit/Sources RoutesETAKit/Tests RoutesETA/RoutesETA RoutesETA/RoutesETATests RoutesETA/RoutesETAUITests)
+SWIFT_DIRS=(TrafficProKit/Sources TrafficProKit/Tests TrafficPro/TrafficPro TrafficPro/TrafficProTests TrafficPro/TrafficProUITests)
 
 echo "--- secrets are not tracked ---"
-if git ls-files --error-unmatch RoutesETA/RoutesETA/Secrets.plist >/dev/null 2>&1; then
-  echo "RoutesETA/RoutesETA/Secrets.plist is tracked by git; it holds the API key (repo is public)" >&2
+if git ls-files --error-unmatch TrafficPro/TrafficPro/Secrets.plist >/dev/null 2>&1; then
+  echo "TrafficPro/TrafficPro/Secrets.plist is tracked by git; it holds the API key" >&2
   exit 1
 fi
-git check-ignore -q RoutesETA/RoutesETA/Secrets.plist || {
+git check-ignore -q TrafficPro/TrafficPro/Secrets.plist || {
   echo "Secrets.plist is not git-ignored" >&2
   exit 1
 }
@@ -29,9 +29,9 @@ fi
 swiftlint lint --strict --quiet
 
 echo "--- package tests (warnings are errors) ---"
-(cd RoutesETAKit && swift test)
+(cd TrafficProKit && swift test)
 
 echo "--- app build + tests (xcodebuild) ---"
-xcodebuild test -project RoutesETA/RoutesETA.xcodeproj -scheme RoutesETA \
+xcodebuild test -project TrafficPro/TrafficPro.xcodeproj -scheme TrafficPro \
   -destination "platform=iOS Simulator,name=${SIM_NAME},OS=${SIM_OS}" -quiet
 echo "iOS checks passed."

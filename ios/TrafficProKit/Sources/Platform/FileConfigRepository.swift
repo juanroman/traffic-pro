@@ -15,13 +15,13 @@ public struct FileConfigRepository: ConfigRepository {
     self.url = url
   }
 
-  /// `Application Support/RoutesETA/config.json`
+  /// `Application Support/TrafficPro/config.json`
   public static func defaultURL() throws -> URL {
     try FileManager.default
       .url(
         for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true
       )
-      .appending(path: "RoutesETA", directoryHint: .isDirectory)
+      .appending(path: "TrafficPro", directoryHint: .isDirectory)
       .appending(path: "config.json", directoryHint: .notDirectory)
   }
 

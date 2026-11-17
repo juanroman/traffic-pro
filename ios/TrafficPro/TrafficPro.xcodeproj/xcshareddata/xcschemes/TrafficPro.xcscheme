@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0EEFE7C0309D0CC900401567"
-               BuildableName = "RoutesETA.app"
-               BlueprintName = "RoutesETA"
-               ReferencedContainer = "container:RoutesETA.xcodeproj">
+               BuildableName = "TrafficPro.app"
+               BlueprintName = "TrafficPro"
+               ReferencedContainer = "container:TrafficPro.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,8 +35,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0EEFE7CD309D0CC900401567"
-               BuildableName = "RoutesETATests.xctest"
-               ReferencedContainer = "container:RoutesETA.xcodeproj">
+               BuildableName = "TrafficProTests.xctest"
+               ReferencedContainer = "container:TrafficPro.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -44,8 +44,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0EEFE7D7309D0CC900401567"
-               BuildableName = "RoutesETAUITests.xctest"
-               ReferencedContainer = "container:RoutesETA.xcodeproj">
+               BuildableName = "TrafficProUITests.xctest"
+               ReferencedContainer = "container:TrafficPro.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -66,9 +66,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0EEFE7C0309D0CC900401567"
-            BuildableName = "RoutesETA.app"
-            BlueprintName = "RoutesETA"
-            ReferencedContainer = "container:RoutesETA.xcodeproj">
+            BuildableName = "TrafficPro.app"
+            BlueprintName = "TrafficPro"
+            ReferencedContainer = "container:TrafficPro.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -83,9 +83,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0EEFE7C0309D0CC900401567"
-            BuildableName = "RoutesETA.app"
-            BlueprintName = "RoutesETA"
-            ReferencedContainer = "container:RoutesETA.xcodeproj">
+            BuildableName = "TrafficPro.app"
+            BlueprintName = "TrafficPro"
+            ReferencedContainer = "container:TrafficPro.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

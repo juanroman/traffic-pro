@@ -6,7 +6,7 @@ import Platform
 import SwiftUI
 
 @main
-struct RoutesETAApp: App {
+struct TrafficProApp: App {
   @State private var store: ConfigStore
   @State private var savedPlaces: SavedPlacesStore
   @State private var router = AppRouter()
