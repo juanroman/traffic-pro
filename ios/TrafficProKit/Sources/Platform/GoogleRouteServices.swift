@@ -18,8 +18,8 @@ public struct GoogleRoutePreviewService: RoutePreviewService {
 }
 
 /// `ETAService` backed by Google's Routes API: one traffic-aware request per
-/// route, run concurrently. Like the Pi's checker, a route that fails never
-/// prevents the others from being reported.
+/// route, run concurrently. A route that fails never prevents the others
+/// from being reported.
 public struct GoogleETAService: ETAService {
   private let client: GoogleRoutesClient
   private let repository: any ConfigRepository

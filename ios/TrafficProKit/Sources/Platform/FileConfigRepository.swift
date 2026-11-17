@@ -1,8 +1,7 @@
 import Domain
 import Foundation
 
-/// Keeps the config on the device as one JSON file (same shape as the API's
-/// config, so nothing is lost if it is ever exchanged with `api/`).
+/// Keeps the config on the device as one JSON file (see `Config`).
 ///
 /// - A missing file is a fresh install: an empty config.
 /// - A file that exists but can't be read or decoded is an error, never silently

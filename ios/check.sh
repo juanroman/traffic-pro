@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# "Is the iOS project green?" — mirrors api/check.sh and `npm run check`.
+# "Is the iOS project green?"
 # Order: format -> lint -> package tests -> app build+tests on a simulator.
 set -euo pipefail
 cd "$(dirname "$0")"

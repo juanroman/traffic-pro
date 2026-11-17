@@ -1,14 +1,13 @@
 # iOS app (`ios/`)
 
-Native SwiftUI client for the commute/routes editor and the "show ETAs"
-button. Built mock-first: UI against in-memory services, real networking to
-`api/` later.
+SwiftUI iPhone app: traffic-aware ETAs for your saved commutes, with route lines on a map.
 
 - `TrafficPro/` — thin Xcode app target (iOS 27.2+, Swift 6, strict concurrency
   `complete`, warnings as errors).
 - `TrafficProKit/` — local Swift package: `Domain` (models, validation, service
   protocols; platform-neutral so a watchOS target can reuse it), `Mocks`
-  (in-memory services), `Features` (iOS-only SwiftUI).
+  (in-memory services), `Platform` (MapKit, files, Google Routes client) and
+  `Features` (iOS-only SwiftUI).
 - Tests use Swift Testing. `ios/check.sh` runs swift-format (strict), SwiftLint
   (strict), package tests and the app tests on a simulator.
 
@@ -38,8 +37,8 @@ The keys are the English text; `es-MX` is the only translation.
 
 ## Google API key (needed for route lines and ETAs)
 
-The app calls Google's Routes API directly (no server), so it needs a key. The repo is
-public, so the key lives in a git-ignored file that Xcode bundles automatically:
+The app calls Google's Routes API directly (no server), so it needs a key. The key lives in a
+git-ignored file that Xcode bundles automatically:
 
 1. `cp ios/Secrets.example.plist ios/TrafficPro/TrafficPro/Secrets.plist`
 2. Put your key in `GOOGLE_ROUTES_API_KEY`.
@@ -67,11 +66,3 @@ preview, one ETA) against your key:
     cd ios/TrafficProKit
     GOOGLE_ROUTES_API_KEY="$(plutil -extract GOOGLE_ROUTES_API_KEY raw ../TrafficPro/TrafficPro/Secrets.plist)" \
       swift test --filter GoogleLiveSmokeTests
-
-### How the app talks to Google
-
-`Platform/GoogleRoutesClient` is a Swift port of `api/app/google_routes_client.py`
-(same endpoint, field masks, `via` waypoints that pass through without stopping,
-and `TRAFFIC_AWARE` for ETAs; minutes rounded half-to-even like the Pi's checker),
-so the app and the Pi ask Google the same question. `api/` and `web/` are not used
-by the app and are not kept in sync with it.

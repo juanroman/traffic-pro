@@ -1,6 +1,6 @@
 extension ETAReport {
-  /// Builds a report and its one-line summary, formatted like the Pushover text
-  /// in `api/app/pushover.py`: "Commute: City 31 · Mordor ?", or
+  /// Builds a report and its one-line summary, formatted as
+  /// "Commute: City 31 · Mordor ?", or
   /// "Commute: Couldn't fetch ETAs" when no route could be fetched.
   public init(commute: String, results: [RouteETA]) {
     let message: String
@@ -15,8 +15,8 @@ extension ETAReport {
 }
 
 extension RouteETA {
-  /// Whole minutes from seconds, rounded half to even like Python's `round`, so
-  /// the app and the Pi's checker agree on the same duration.
+  /// Whole minutes from seconds, rounded half to even, so a tie such as 90 s
+  /// is always rounded the same way.
   public static func minutes(fromSeconds seconds: Int) -> Int {
     Int((Double(seconds) / 60).rounded(.toNearestOrEven))
   }

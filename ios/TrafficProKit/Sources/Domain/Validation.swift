@@ -3,8 +3,8 @@ import Foundation
 /// Google's computeRoutes allows 25 intermediates; the API reserves two.
 public let maxViaPoints = 23
 
-/// One thing wrong with a config. Mirrors the validators in
-/// `api/app/config_models.py` so the app rejects what the API would (HTTP 422).
+/// One thing wrong with a config. The app rejects a config with any of
+/// these before saving it.
 public enum ConfigIssue: Hashable, Sendable, CustomStringConvertible {
   case emptyCommuteName
   case duplicateCommuteName(String)

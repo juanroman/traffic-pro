@@ -1,4 +1,4 @@
-/// Ported from `web/src/map/polylineGeometry.ts`. Google returns one combined
+/// Google returns one combined
 /// polyline per route, not one per via point, so where a new via point belongs
 /// in `via[]` is found by comparing nearest-vertex indices.
 public enum PolylineGeometry {

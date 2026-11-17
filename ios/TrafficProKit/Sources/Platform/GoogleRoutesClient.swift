@@ -28,10 +28,8 @@ public enum GoogleRoutesError: Error, Equatable, LocalizedError {
   }
 }
 
-/// Thin client for Google's Routes API `computeRoutes`, ported from
-/// `api/app/google_routes_client.py` so the app and the Pi's checker ask the
-/// same question and get the same answer: same endpoint, field masks, `via`
-/// intermediates, and traffic-aware duration. No SDK, plain REST.
+/// Thin client for Google's Routes API `computeRoutes`. Same endpoint, field masks,
+/// `via` intermediates, and traffic-aware duration for every request. No SDK, plain REST.
 public struct GoogleRoutesClient: Sendable {
   public static let endpoint = URL(
     string: "https://routes.googleapis.com/directions/v2:computeRoutes")!

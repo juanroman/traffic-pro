@@ -1,6 +1,5 @@
-/// Google's encoded polyline format (precision 5). `decode` is a Swift port of
-/// `api/app/polyline.py`'s `decode_polyline`, with bounds checks so a truncated
-/// or corrupt string throws instead of crashing.
+/// Google's encoded polyline format (precision 5). `decode` has bounds checks so a
+/// truncated or corrupt string throws instead of crashing.
 public enum PolylineCodec {
   public enum DecodeError: Error, Equatable, Sendable {
     case malformed
