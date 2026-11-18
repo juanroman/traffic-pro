@@ -18,6 +18,13 @@
 - Icon: **Timeline** (stacked ETA pills + a spine with stop dots), light/dark/tinted variants,
   default system blue accent.
 
+- **iPhone only.** The UI is designed for an iPhone (map + bottom sheet), so the app is not offered
+  on iPad, and the Mac / Apple Vision "Designed for iPad" destinations are off
+  (`TARGETED_DEVICE_FAMILY = 1`, `SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD` and
+  `SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD` = NO). Mac/Vision can still list an iPhone-only app as
+  "Designed for iPhone" unless it is switched off under Pricing and Availability in App Store
+  Connect.
+
 ## Apple Watch (companion, not a replacement)
 - A quick look at the ETAs: read-only, no maps, no editing on the watch. Commutes are edited on the
   phone and synced to the watch (definitions only, never ETAs).
