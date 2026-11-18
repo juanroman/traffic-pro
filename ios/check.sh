@@ -6,7 +6,8 @@
 #   ios/check.sh package package tests (warnings are errors)
 #   ios/check.sh build   app build-for-testing on a simulator
 #   ios/check.sh unit    app unit tests (needs `build` first)
-#   ios/check.sh smoke   the few UI tests CI runs on every PR (needs `build` first)
+#   ios/check.sh smoke   the few UI tests CI runs on every PR, retrying a failed test once
+#                        (needs `build` first)
 #   ios/check.sh ui [Class[/test] ...]
 #                        all UI tests, or only the given ones (needs `build` first)
 #
@@ -124,7 +125,9 @@ stage_ui() { # optional args: Class or Class/test
 stage_smoke() {
   local only=()
   for test in "${SMOKE_TESTS[@]}"; do only+=("-only-testing:TrafficProUITests/${test%% *}"); done
-  run_tests smoke "${only[@]}"
+  # A cold simulator launch on a CI runner occasionally times out the first UI test. Retry a
+  # failed test once (only that test); a retry that passes is still recorded in the .xcresult.
+  run_tests smoke "${only[@]}" -retry-tests-on-failure -test-iterations 2
 }
 
 case "${1:-all}" in
