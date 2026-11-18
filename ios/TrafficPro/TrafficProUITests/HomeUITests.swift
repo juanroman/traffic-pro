@@ -11,7 +11,7 @@ final class HomeUITests: XCTestCase {
 
   private func launch(_ extra: [String] = []) -> XCUIApplication {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services"] + extra
+    app.launchArguments = LaunchArguments.base + extra
     app.launch()
     return app
   }

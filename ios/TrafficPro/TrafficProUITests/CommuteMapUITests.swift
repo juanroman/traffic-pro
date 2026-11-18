@@ -12,7 +12,7 @@ final class CommuteMapUITests: XCTestCase {
   /// is left small, as it opens.
   private func openWorkToHome(expanded: Bool = true) -> XCUIApplication {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services"]
+    app.launchArguments = LaunchArguments.base
     app.launch()
     app.openCommute("Work to Home")
     if expanded {

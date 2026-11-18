@@ -8,7 +8,7 @@ final class TrafficProUITests: XCTestCase {
   @MainActor
   func testDrillIntoACommuteAndBack() throws {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services"]
+    app.launchArguments = LaunchArguments.base
     app.launch()
     // The sheet opens small, which leaves the back button uncovered (pulled all the way
     // up it would cover it).
@@ -22,7 +22,7 @@ final class TrafficProUITests: XCTestCase {
   @MainActor
   func testDeleteAsksForConfirmationAndLeavesTheOtherCommuteOnHome() throws {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services"]
+    app.launchArguments = LaunchArguments.base
     app.launch()
     app.openCommute("Home to Work")
 
@@ -46,7 +46,7 @@ final class TrafficProUITests: XCTestCase {
   @MainActor
   func testSearchForADestinationAndRenameFromDetail() throws {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services"]
+    app.launchArguments = LaunchArguments.base
     app.launch()
     app.openCommute("Work to Home")
 
@@ -77,7 +77,7 @@ final class TrafficProUITests: XCTestCase {
   @MainActor
   func testHomeShortcutIsSetOnceThenReused() throws {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services"]
+    app.launchArguments = LaunchArguments.base
     app.launch()
     app.openCommute("Work to Home")
     app.buttons["Edit"].tap()  // the places only show while editing
@@ -102,7 +102,7 @@ final class TrafficProUITests: XCTestCase {
   @MainActor
   func testAddRenameRecolorAndDeleteARoute() throws {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services"]
+    app.launchArguments = LaunchArguments.base
     app.launch()
     app.openCommute("Home to Work")
 

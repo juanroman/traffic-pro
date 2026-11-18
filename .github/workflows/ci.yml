@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# A new push to a PR cancels the run it supersedes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Xcode 27.2 and the iOS 27.2 simulator exist only on the `xcode-27` runner image
+  # (its default Xcode is 27.1, so each job selects 27.2).
+  XCODE_APP: /Applications/Xcode_27.2.app
+  RESULTS_DIR: ${{ github.workspace }}/results
+
+jobs:
+  lint:
+    name: Lint (secrets, swift-format, SwiftLint)
+    runs-on: xcode-27
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: sudo xcode-select -s "$XCODE_APP"
+      - run: command -v swiftlint || brew install swiftlint
+      - run: ios/check.sh lint
+
+  package-tests:
+    name: Package tests
+    runs-on: xcode-27
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: sudo xcode-select -s "$XCODE_APP"
+      - run: ios/check.sh package
+
+  # Build, unit tests and a short UI smoke set. The full UI suite is slow on a CI runner, so it
+  # runs locally (`ios/check.sh`) or on demand from the "UI tests (full)" workflow.
+  app:
+    name: App (build, unit tests, UI smoke tests)
+    runs-on: xcode-27
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: sudo xcode-select -s "$XCODE_APP"
+      - id: build
+        name: Build for testing
+        run: ios/check.sh build
+      - name: Unit tests
+        run: ios/check.sh unit
+      # Runs even if the unit tests failed, so one run shows every failing stage.
+      - name: UI smoke tests
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: ios/check.sh smoke
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: ${{ !success() }}
+        with:
+          name: xcresult
+          path: results/
+          retention-days: 7

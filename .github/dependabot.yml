@@ -1,0 +1,16 @@
+version: 2
+updates:
+  # Keeps the pinned action SHAs in .github/workflows current.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # TrafficProKit has no external dependencies today, so this is idle until one is added.
+  - package-ecosystem: swift
+    directory: /ios/TrafficProKit
+    schedule:
+      interval: weekly

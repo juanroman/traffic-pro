@@ -9,7 +9,7 @@ final class NewCommuteUITests: XCTestCase {
 
   private func openForm() -> XCUIApplication {
     let app = XCUIApplication()
-    app.launchArguments = ["-mock-services"]
+    app.launchArguments = LaunchArguments.base
     app.launch()
     app.chooseFromHomeMenu("home-add")
     XCTAssertTrue(app.textFields["commute-name"].waitForExistence(timeout: 10))

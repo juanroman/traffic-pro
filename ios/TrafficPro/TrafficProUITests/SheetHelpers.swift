@@ -1,5 +1,15 @@
 import XCTest
 
+/// Launch arguments every UI test starts from.
+///
+/// - `-mock-services`: offline, in-memory, seeded doubles for a clean slate on every run.
+/// - `-no-animations`: turns UIKit animations off. Without it, a system menu or keyboard can
+///   leave an animation "started" that XCTest never sees finish, and every later action then
+///   waits the full 60 s for the app to idle (seen on the GitHub CI runner, not locally).
+enum LaunchArguments {
+  static let base = ["-mock-services", "-no-animations"]
+}
+
 extension XCUIApplication {
   /// The app opens on Home (the ETAs). Most tests are about one commute's screen, which is one
   /// tap away behind "Details": pick the commute in Home's selector, then open it.

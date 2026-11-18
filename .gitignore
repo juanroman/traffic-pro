@@ -32,3 +32,6 @@ xcuserdata/
 *.xcuserstate
 .DS_Store
 .claude/
+
+# xcodebuild output of ios/check.sh
+build/
