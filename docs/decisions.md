@@ -33,6 +33,13 @@
   watch-sized copies of the phone's, and `Color(hex:)` and `RelativeAgeSchedule` are copies too,
   because `Features` is iOS-only. Change one, check the other. The Google logo is the same image
   set, at the guide's smallest height (16 pt).
+- With 2+ commutes the commute name is a button (chevron) that opens a list to pick from; swiping
+  between pages was rejected because it clashes with scrolling and pull to refresh. Choosing one
+  counts as "viewed", like on the phone.
+- **Handoff to the iPhone is not built.** It needs `NSUserActivityTypes` in the phone's Info.plist
+  (a generated plist can't hold that array through build settings, so a plist file would be added
+  to the phone target), plus handling the activity in `RootView`; and a simulator can't test it.
+  Do it only if wanted, and test on devices.
 - The watch catalogs (`Localizable`, `InfoPlist`) hold only the strings the watch can show,
   including package strings (`String(localized:)` looks in the main bundle): when the watch shows a
   new package string, copy its entry from the phone catalog.
