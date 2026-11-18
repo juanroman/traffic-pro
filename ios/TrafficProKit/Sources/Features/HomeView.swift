@@ -19,8 +19,6 @@ struct HomeView: View {
   /// a push while a sheet is still dismissing gets dropped.
   @State private var createdCommute: CommuteEntry.ID?
 
-  @Environment(\.scenePhase) private var scenePhase
-
   var body: some View {
     content
       .navigationTitle("ETAs")
@@ -39,13 +37,7 @@ struct HomeView: View {
       .task(id: store.loadState) {
         if store.loadState == .loaded { await model.open() }
       }
-      .onChange(of: scenePhase) { _, phase in
-        if phase == .active { Task { await model.reopenIfNeeded() } }
-      }
-      // Back from editing: the commute may have been renamed, deleted or given other routes.
-      .onChange(of: router.path.isEmpty) { _, isEmpty in
-        if isEmpty { Task { await model.reopenIfNeeded() } }
-      }
+      .modifier(ReopenWhenBack(model: model, router: router))
   }
 
   @ToolbarContentBuilder private var toolbar: some ToolbarContent {
@@ -141,6 +133,29 @@ struct HomeView: View {
   }
 
   private var selectedCommute: Commute? { selectedEntry?.commute }
+}
+
+/// Picks the commute again when the app comes back to the foreground and when navigation returns
+/// to Home (the commute may have been renamed, deleted or given other routes).
+///
+/// A modifier of its own, not `.onChange` on `HomeView`: the scene phase and the navigation path
+/// are read only for this side effect, and reading them in `HomeView.body` would re-run the whole
+/// screen on every change. Here only this body re-runs.
+private struct ReopenWhenBack: ViewModifier {
+  let model: HomeModel
+  let router: AppRouter
+
+  @Environment(\.scenePhase) private var scenePhase
+
+  func body(content: Content) -> some View {
+    content
+      .onChange(of: scenePhase) { _, phase in
+        if phase == .active { Task { await model.reopenIfNeeded() } }
+      }
+      .onChange(of: router.path.isEmpty) { _, isEmpty in
+        if isEmpty { Task { await model.reopenIfNeeded() } }
+      }
+  }
 }
 
 /// Segments for a few commutes; a menu once they would not fit (many commutes, or large type).

@@ -29,11 +29,14 @@ struct RoutesSection: View {
       if routes.isEmpty {
         Button("Add your first route", systemImage: "plus", action: onAdd)
       }
-      ForEach(Array(routes.enumerated()), id: \.element.name) { index, route in
+      ForEach(routes.enumerated(), id: \.element.name) { index, route in
         HStack {
+          // Only the selected row shows the ETA; the others get `.idle`, so a change to the
+          // ETA does not re-run every row.
           RouteRow(
             route: route, distanceMeters: distances[index],
-            isSelected: selected == route.name, eta: selectedETA
+            isSelected: selected == route.name,
+            eta: selected == route.name ? selectedETA : .idle
           ) {
             selected = selected == route.name ? nil : route.name
           }
