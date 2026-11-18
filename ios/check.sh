@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
 # "Is the iOS project green?"
 #
-#   ios/check.sh [all]   everything below, in order (the local gate)
+#   ios/check.sh [all]   the full local gate: every stage below, with all UI tests
 #   ios/check.sh lint    secrets are not tracked, swift-format, SwiftLint
 #   ios/check.sh package package tests (warnings are errors)
 #   ios/check.sh build   app build-for-testing on a simulator
 #   ios/check.sh unit    app unit tests (needs `build` first)
-#   ios/check.sh boot-sim / wait-sim
-#                        start booting the simulator in the background / wait until it is ready
-#                        (CI boots it while the build artifact downloads)
-#   ios/check.sh ui [Class ...]
-#                        app UI tests (needs `build` first); optionally only the given
-#                        UI test classes, which is how CI shards them across jobs
+#   ios/check.sh smoke   the few UI tests CI runs on every PR (needs `build` first)
+#   ios/check.sh ui [Class[/test] ...]
+#                        all UI tests, or only the given ones (needs `build` first)
 #
-# CI runs the stages as separate steps so a failure says which stage broke.
+# CI runs lint, package, build, unit and smoke as separate steps so a failure says which stage
+# broke. The full UI suite is slow on a CI runner, so it runs locally (`all` / `ui`) or on demand
+# from the "UI tests (full)" workflow.
 # Set RESULTS_DIR to keep an .xcresult bundle per xcodebuild stage (CI uploads them on failure).
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -26,30 +25,23 @@ SCHEME=TrafficPro
 DERIVED_DATA="${DERIVED_DATA:-build/DerivedData}" # git-ignored; shared by build/unit/ui
 DESTINATION="platform=iOS Simulator,name=${SIM_NAME},OS=${SIM_OS}"
 
+# One path through each screen that matters, avoiding the gesture-heavy tests (menu, drag,
+# pull-to-refresh, map) that are slow and flaky on a CI runner. Change the list here.
+SMOKE_TESTS=(
+  HomeUITests/testEachChipReadsAsOneThingWithMinutesAndExactlyOneIsFastest # Home shows the ETAs
+  HomeUITests/testTheNumbersCarryTheirAgeAndGoogleSAttribution # Google attribution (terms)
+  TrafficProUITests/testDrillIntoACommuteAndBack # Home -> Details -> back
+  TrafficProUITests/testAddRenameRecolorAndDeleteARoute # editing, incl. deleting a route
+  NewCommuteUITests/testCreatingACommuteOpensItReadyForItsFirstRoute # add a commute
+  LocalizationUITests/testHomeSpeaksSpanish # es-MX
+)
+
 result_bundle_args() { # $1 = stage name
   if [[ -n "${RESULTS_DIR:-}" ]]; then
     mkdir -p "$RESULTS_DIR"
     rm -rf "${RESULTS_DIR:?}/$1.xcresult" # xcodebuild refuses to overwrite a bundle
     echo "-resultBundlePath" "$RESULTS_DIR/$1.xcresult"
   fi
-}
-
-simulator_udid() { # the name alone is ambiguous across runtimes, so look it up by OS
-  xcrun simctl list devices available "iOS ${SIM_OS}" | grep "${SIM_NAME} (" \
-    | grep -oE '[0-9A-F]{8}(-[0-9A-F]{4}){3}-[0-9A-F]{12}' | head -1
-}
-
-stage_boot_sim() {
-  local udid
-  udid="$(simulator_udid)"
-  [[ -n "$udid" ]] || { echo "no ${SIM_NAME} simulator for iOS ${SIM_OS}" >&2; exit 1; }
-  echo "--- booting ${SIM_NAME} (iOS ${SIM_OS}) ---"
-  xcrun simctl boot "$udid" 2>&1 || true # already booted is fine
-}
-
-stage_wait_sim() {
-  echo "--- waiting for the simulator ---"
-  xcrun simctl bootstatus "$(simulator_udid)" -b
 }
 
 stage_lint() {
@@ -94,57 +86,67 @@ stage_build() {
     $(result_bundle_args build) -quiet
 }
 
-stage_tests() { # $1 = unit | ui; remaining args = test classes (ui only)
-  local kind="$1" target only=()
+# $1 = result bundle name; remaining args = -only-testing:... selectors
+run_tests() {
+  local name="$1"
   shift
-  case "$kind" in
-    unit) target=TrafficProTests ;;
-    ui) target=TrafficProUITests ;;
-  esac
-  if (($# > 0)); then
-    for class in "$@"; do only+=("-only-testing:$target/$class"); done
-  else
-    only=("-only-testing:$target")
-  fi
-  # Run from the .xctestrun that `build` produced, so CI shards need only the build products.
   local xctestrun
   xctestrun="$(ls "$DERIVED_DATA"/Build/Products/*.xctestrun 2>/dev/null | head -1)"
   if [[ -z "$xctestrun" ]]; then
     echo "no .xctestrun under $DERIVED_DATA/Build/Products; run \`ios/check.sh build\` first" >&2
     exit 1
   fi
-  # No -quiet here: the per-test lines are how you see progress (and which test is slow or stuck).
-  # A test that hangs is failed by the timeouts below instead of stalling the whole job.
-  echo "--- app $kind tests (xcodebuild) ---"
+  # No -quiet: the per-test lines show progress and which test is slow or stuck. A test that
+  # hangs is failed by the timeouts instead of stalling the whole job.
+  echo "--- app $name tests (xcodebuild) ---"
   # shellcheck disable=SC2046
   xcodebuild test-without-building -xctestrun "$xctestrun" -destination "$DESTINATION" \
     -test-timeouts-enabled YES -default-test-execution-time-allowance 120 \
     -maximum-test-execution-time-allowance 300 \
-    "${only[@]}" $(result_bundle_args "$kind") 2>&1 \
+    "$@" $(result_bundle_args "$name") 2>&1 \
     | grep --line-buffered -v 'IDELaunchParametersSnapshot\|IDETestOperationsObserverDebug'
+}
+
+stage_unit() {
+  run_tests unit -only-testing:TrafficProTests
+}
+
+stage_ui() { # optional args: Class or Class/test
+  local only=()
+  if (($# > 0)); then
+    for test in "$@"; do only+=("-only-testing:TrafficProUITests/$test"); done
+  else
+    only=("-only-testing:TrafficProUITests")
+  fi
+  run_tests ui "${only[@]}"
+}
+
+stage_smoke() {
+  local only=()
+  for test in "${SMOKE_TESTS[@]}"; do only+=("-only-testing:TrafficProUITests/${test%% *}"); done
+  run_tests smoke "${only[@]}"
 }
 
 case "${1:-all}" in
   lint) stage_lint ;;
-  boot-sim) stage_boot_sim ;;
-  wait-sim) stage_wait_sim ;;
   package) stage_package ;;
   build) stage_build ;;
-  unit) stage_tests unit ;;
+  unit) stage_unit ;;
+  smoke) stage_smoke ;;
   ui)
     shift
-    stage_tests ui "$@"
+    stage_ui "$@"
     ;;
   all)
     stage_lint
     stage_package
     stage_build
-    stage_tests unit
-    stage_tests ui
+    stage_unit
+    stage_ui
     echo "iOS checks passed."
     ;;
   *)
-    echo "usage: ios/check.sh [all|lint|package|build|unit|ui|boot-sim|wait-sim]" >&2
+    echo "usage: ios/check.sh [all|lint|package|build|unit|smoke|ui]" >&2
     exit 2
     ;;
 esac

@@ -23,10 +23,11 @@ Key restrictions and a live smoke test are in [`ios/README.md`](ios/README.md).
 `ios/check.sh` — format, lint, package tests and app tests on a simulator. It must pass before
 every commit.
 
-CI (`.github/workflows/ci.yml`) runs the same stages as separate jobs: lint, package tests,
-build-for-testing (once), unit tests, and the UI tests in three parallel shards (classes are listed
-in the workflow). It uses the `xcode-27` runner, the only image with the iOS 27.2 SDK. Dependabot
-keeps the pinned action versions current.
+CI (`.github/workflows/ci.yml`) runs on every PR: lint, package tests, and one job that builds,
+runs the unit tests and a short UI smoke set (`SMOKE_TESTS` in `ios/check.sh`). The full UI suite
+is slow on a CI runner: run it locally with `ios/check.sh` before merging UI changes, or on demand
+from the Actions tab ("UI tests (full)"). It uses the `xcode-27` runner, the only image with the
+iOS 27.2 SDK. Dependabot keeps the pinned action versions current.
 
 ## Layout
 - `ios/TrafficPro/` — app target, unit tests, UI tests, string catalogs, assets
