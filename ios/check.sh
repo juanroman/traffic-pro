@@ -79,7 +79,20 @@ stage_package() {
   (cd TrafficProKit && swift test)
 }
 
+# The watch target lists Secrets.plist explicitly (the phone app's folder is synced, so a missing
+# file never mattered), so a build needs the file to exist. Without a real key, as on CI or a fresh
+# clone, the template with its placeholder is enough: the app then reports "add your key" at
+# runtime and the tests use mocks. A real file is never touched.
+ensure_secrets_file() {
+  local target=TrafficPro/TrafficPro/Secrets.plist
+  if [[ ! -f "$target" ]]; then
+    echo "--- no Secrets.plist: using the placeholder template (no real key) ---"
+    cp Secrets.example.plist "$target"
+  fi
+}
+
 stage_build() {
+  ensure_secrets_file
   echo "--- app build-for-testing (xcodebuild) ---"
   # shellcheck disable=SC2046
   xcodebuild build-for-testing -project "$PROJECT" -scheme "$SCHEME" \
