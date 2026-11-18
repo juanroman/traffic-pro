@@ -5,8 +5,8 @@ import Observation
 /// Fetches the ETAs for one commute and holds what the sheet shows.
 @MainActor
 @Observable
-final class ETAModel {
-  enum State: Equatable {
+public final class ETAModel {
+  public enum State: Equatable {
     case idle
     case loading
     case loaded(ETAReport, fetchedAt: Date)
@@ -14,20 +14,20 @@ final class ETAModel {
     case failed(String)
   }
 
-  private(set) var state: State = .idle
+  public private(set) var state: State = .idle
   /// A pull-to-refresh is in flight and the previous report is still on screen (the view dims
   /// it). Never set by `load`, which replaces the report with a spinner instead.
-  private(set) var isRefreshing = false
+  public private(set) var isRefreshing = false
   private let service: any ETAService
   private let commuteName: String
 
-  init(service: any ETAService, commuteName: String) {
+  public init(service: any ETAService, commuteName: String) {
     self.service = service
     self.commuteName = commuteName
   }
 
   /// Replaces whatever is shown with a spinner, then the fresh result: nothing old stays visible.
-  func load() async {
+  public func load() async {
     state = .loading
     await fetch()
   }
@@ -35,7 +35,7 @@ final class ETAModel {
   /// Like `load`, but keeps the current report on screen (dimmed) until the new one arrives, as
   /// pull-to-refresh does. If nothing is loaded yet it is just `load`. A failure replaces the
   /// report with the error rather than leaving old numbers next to it.
-  func refresh() async {
+  public func refresh() async {
     guard case .loaded = state else {
       await load()
       return

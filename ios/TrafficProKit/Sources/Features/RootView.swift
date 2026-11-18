@@ -1,4 +1,5 @@
 import Domain
+import HomeCore
 import SwiftUI
 
 /// App entry screen: owns the `NavigationStack` (rooted at Home) and maps routes to screens.

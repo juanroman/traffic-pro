@@ -1,5 +1,6 @@
 #if DEBUG
   import Domain
+  import HomeCore
   import Mocks
   import SwiftUI
 
