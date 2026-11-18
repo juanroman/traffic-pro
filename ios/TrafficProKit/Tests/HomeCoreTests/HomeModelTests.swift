@@ -3,7 +3,7 @@ import Foundation
 import Mocks
 import Testing
 
-@testable import Features
+@testable import HomeCore
 
 /// Counts which commutes were fetched, delegating to the deterministic mock.
 actor RecordingETAService: ETAService {

@@ -10,8 +10,8 @@ import Observation
 /// another commute can never show the previous one's numbers.
 @MainActor
 @Observable
-final class HomeModel {
-  enum Phase: Equatable {
+public final class HomeModel {
+  public enum Phase: Equatable {
     /// Waiting for the store, the user's location, or the choice of commute.
     case resolving
     /// There are no commutes to show.
@@ -22,11 +22,11 @@ final class HomeModel {
     case ready
   }
 
-  private(set) var phase: Phase = .resolving
-  private(set) var selectedName: String?
+  public private(set) var phase: Phase = .resolving
+  public private(set) var selectedName: String?
   /// Why that commute was chosen; nil when the user picked it themselves.
-  private(set) var reason: HomeSelection.Reason?
-  private(set) var eta: ETAModel?
+  public private(set) var reason: HomeSelection.Reason?
+  public private(set) var eta: ETAModel?
 
   private let store: ConfigStore
   private let service: any ETAService
@@ -49,7 +49,7 @@ final class HomeModel {
   ///   - freshFor: Coming back to the screen within this many seconds of a fetch (and with the
   ///     commute unchanged) doesn't fetch again; it absorbs the app going inactive for the
   ///     system's permission alert.
-  init(
+  public init(
     store: ConfigStore, service: any ETAService, location: any LocationProvider,
     recents: any RecentCommutesRepository, prompts: any LocationPromptRepository,
     locationTimeout: Duration = .seconds(3), freshFor: TimeInterval = 5
@@ -64,7 +64,7 @@ final class HomeModel {
   }
 
   /// Chooses the commute and fetches its ETAs. Call once the store has loaded.
-  func open() async {
+  public func open() async {
     guard !isOpening else { return }
     isOpening = true
     defer { isOpening = false }
@@ -99,25 +99,25 @@ final class HomeModel {
   }
 
   /// The user picked a commute: show it, and let the choice count as "viewed".
-  func select(_ name: String) async {
+  public func select(_ name: String) async {
     guard name != selectedName else { return }
     let recent = (try? await recents.load()) ?? []
     await show(name, reason: nil, recent: recent)
   }
 
   /// Pull-to-refresh: the numbers on screen stay (dimmed) until the new ones arrive.
-  func refresh() async {
+  public func refresh() async {
     await eta?.refresh()
   }
 
   /// "Try Again" after a failure.
-  func retry() async {
+  public func retry() async {
     await eta?.load()
   }
 
   /// The app came back to the foreground, or the user returned from editing: fetch again,
   /// unless nothing changed and the ETAs are only seconds old.
-  func reopenIfNeeded() async {
+  public func reopenIfNeeded() async {
     switch phase {
     case .askingPermission, .resolving:
       return
@@ -146,13 +146,13 @@ final class HomeModel {
   }
 
   /// "Continue" on the explanation: show the system prompt, then choose with the answer.
-  func allowLocation() async {
+  public func allowLocation() async {
     _ = await location.requestAuthorization()
     await open()
   }
 
   /// "Not now" on the explanation: never ask again, and choose without a location.
-  func declineLocation() async {
+  public func declineLocation() async {
     await prompts.markDeclined()
     await open()
   }

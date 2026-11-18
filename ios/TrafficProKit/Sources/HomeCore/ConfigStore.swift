@@ -97,7 +97,7 @@ public final class ConfigStore {
   @discardableResult
   public func moveCommute(from source: IndexSet, to destination: Int) async -> String? {
     var updated = entries
-    updated.move(fromOffsets: source, toOffset: destination)
+    updated.reorder(fromOffsets: source, toOffset: destination)
     return await apply(updated)
   }
 
@@ -108,7 +108,7 @@ public final class ConfigStore {
   public func moveRoute(
     in id: CommuteEntry.ID, from source: IndexSet, to destination: Int
   ) async -> String? {
-    await updateCommute(id: id) { $0.routes.move(fromOffsets: source, toOffset: destination) }
+    await updateCommute(id: id) { $0.routes.reorder(fromOffsets: source, toOffset: destination) }
   }
 
   @discardableResult

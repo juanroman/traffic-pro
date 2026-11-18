@@ -3,7 +3,7 @@ import Foundation
 import Mocks
 import Testing
 
-@testable import Features
+@testable import HomeCore
 
 @MainActor
 struct ETAModelTests {

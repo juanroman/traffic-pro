@@ -50,6 +50,9 @@
           "product-name": "Features",
           "build-phase": { "build-phase": "frameworks" },
         }, {
+          "product-name": "HomeCore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
           "product-name": "Mocks",
           "build-phase": { "build-phase": "frameworks" },
         }, {
