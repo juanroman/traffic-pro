@@ -18,6 +18,20 @@
 - Icon: **Timeline** (stacked ETA pills + a spine with stop dots), light/dark/tinted variants,
   default system blue accent.
 
+## Apple Watch (companion, not a replacement)
+- A quick look at the ETAs: read-only, no maps, no editing on the watch. Commutes are edited on the
+  phone and synced to the watch (definitions only, never ETAs).
+- The watch fetches ETAs itself from Google (`URLSession`). A GPS-only watch reaches the network
+  through the paired phone or Wi-Fi; that is transparent to the code.
+- **No complication or widget.** Decided by the owner: it would mean the system storing ETAs.
+- Target `TrafficProWatch`, bundle ID `mx.juanroman.traffic-pro.watchkitapp` (kept on purpose), watchOS
+  27.2. It bundles the same git-ignored `Secrets.plist` through a target-membership exception;
+  never copy the file. The Google key's restrictions must allow the watch bundle ID.
+- Shared code: `Domain`, `HomeCore` (UI-free Home models), `Platform`, `Mocks`. `Features` is
+  iOS-only.
+- On watchOS a bare `UserDefaults.init` reference resolves to a deprecated initializer; name
+  `UserDefaults(suiteName:)` explicitly.
+
 ## Google terms (verified 2026-11-13)
 - ETAs are held in memory only, never persisted (only place_id and lat/lng may be cached 30 days).
 - Show the "Google Maps" attribution in the same container as the data. No speech features.

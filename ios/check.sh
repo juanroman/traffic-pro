@@ -20,7 +20,7 @@ cd "$(dirname "$0")"
 
 SIM_NAME="${SIM_NAME:-iPhone 18 Pro}"
 SIM_OS="${SIM_OS:-27.2}" # several runtimes are installed; the name alone is ambiguous
-SWIFT_DIRS=(TrafficProKit/Sources TrafficProKit/Tests TrafficPro/TrafficPro TrafficPro/TrafficProTests TrafficPro/TrafficProUITests)
+SWIFT_DIRS=(TrafficProKit/Sources TrafficProKit/Tests TrafficPro/TrafficPro TrafficPro/TrafficProTests TrafficPro/TrafficProUITests TrafficPro/TrafficProWatch)
 PROJECT=TrafficPro/TrafficPro.xcodeproj
 SCHEME=TrafficPro
 DERIVED_DATA="${DERIVED_DATA:-build/DerivedData}" # git-ignored; shared by build/unit/ui
@@ -79,7 +79,20 @@ stage_package() {
   (cd TrafficProKit && swift test)
 }
 
+# The watch target lists Secrets.plist explicitly (the phone app's folder is synced, so a missing
+# file never mattered), so a build needs the file to exist. Without a real key, as on CI or a fresh
+# clone, the template with its placeholder is enough: the app then reports "add your key" at
+# runtime and the tests use mocks. A real file is never touched.
+ensure_secrets_file() {
+  local target=TrafficPro/TrafficPro/Secrets.plist
+  if [[ ! -f "$target" ]]; then
+    echo "--- no Secrets.plist: using the placeholder template (no real key) ---"
+    cp Secrets.example.plist "$target"
+  fi
+}
+
 stage_build() {
+  ensure_secrets_file
   echo "--- app build-for-testing (xcodebuild) ---"
   # shellcheck disable=SC2046
   xcodebuild build-for-testing -project "$PROJECT" -scheme "$SCHEME" \

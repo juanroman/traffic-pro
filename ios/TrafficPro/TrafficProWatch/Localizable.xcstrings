@@ -1,0 +1,28 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "No commutes yet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay trayectos"
+          }
+        }
+      }
+    },
+    "Open Traffic Pro on your iPhone to add a commute." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre Traffic Pro en tu iPhone para agregar un trayecto."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

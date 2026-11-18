@@ -17,6 +17,8 @@ struct TrafficProApp: App {
   private let location: any LocationProvider
   private let recents: any RecentCommutesRepository
   private let locationPrompt: any LocationPromptRepository
+  /// Sends the commutes to the watch. Held here because `WCSession` only keeps its delegate weakly.
+  private let watchBridge: WatchConnectivityBridge?
 
   /// Standalone app: commutes are saved on the device (a JSON file), place search
   /// is MapKit, and route lines and ETAs come straight from Google's Routes API
@@ -35,7 +37,19 @@ struct TrafficProApp: App {
 
     let configRepository: any ConfigRepository =
       useMocks ? InMemoryConfigRepository() : Self.fileRepository()
-    _store = State(initialValue: ConfigStore(repository: configRepository))
+    // The store's repository also hands every loaded or saved config to the watch. The ETA
+    // service below reads the plain one: fetching ETAs must not resend the commutes.
+    if useMocks {
+      watchBridge = nil
+      _store = State(initialValue: ConfigStore(repository: configRepository))
+    } else {
+      let bridge = WatchConnectivityBridge()
+      bridge.activate()
+      watchBridge = bridge
+      _store = State(
+        initialValue: ConfigStore(
+          repository: SyncingConfigRepository(wrapping: configRepository, sink: bridge)))
+    }
 
     // ETA services share the store's repository so ETAs reflect what was just edited.
     if useMocks {

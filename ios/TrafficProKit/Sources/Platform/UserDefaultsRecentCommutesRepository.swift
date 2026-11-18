@@ -18,7 +18,9 @@ public struct UserDefaultsRecentCommutesRepository: RecentCommutesRepository {
     self.key = key
   }
 
-  private var defaults: UserDefaults { suiteName.flatMap(UserDefaults.init) ?? .standard }
+  private var defaults: UserDefaults {
+    suiteName.flatMap { UserDefaults(suiteName: $0) } ?? .standard
+  }
 
   public func load() async throws -> [String] {
     defaults.stringArray(forKey: key) ?? []
