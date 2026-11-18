@@ -177,6 +177,17 @@
         }
       }
     },
+    "Commute": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trayecto"
+          }
+        }
+      }
+    },
     "Continue": {
       "extractionState": "manual",
       "localizations": {
