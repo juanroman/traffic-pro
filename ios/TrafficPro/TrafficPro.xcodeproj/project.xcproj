@@ -18,9 +18,25 @@
     },
   ],
   "files": [
-    { "kind": "folder", "path": "TrafficPro", "target-membership": [ "TrafficPro" ] },
+    {
+      "kind": "folder",
+      "path": "TrafficPro",
+      "target-membership": [
+        "TrafficPro",
+      ],
+      "membership-exceptions": [
+        {
+          "target": "TrafficProWatch",
+          "inclusions": [
+            "Secrets.plist",
+          ],
+        },
+      ],
+    },
     { "kind": "folder", "path": "TrafficProTests", "target-membership": [ "TrafficProTests" ] },
     { "kind": "folder", "path": "TrafficProUITests", "target-membership": [ "TrafficProUITests" ] },
+    { "kind": "folder", "path": "TrafficProWatch", "target-membership": [ "TrafficProWatch" ] },
+    { "kind": "group", "name": "Frameworks" },
     {
       "kind": "group",
       "name": "Products",
@@ -28,6 +44,7 @@
         { "path": "<PRODUCTS>/TrafficPro.app", "id": "0EEFE7C1309D0CC900401567", "type": "wrapper.application", "index": false },
         { "path": "<PRODUCTS>/TrafficProTests.xctest", "id": "0EEFE7CE309D0CC900401567", "type": "wrapper.cfbundle", "index": false },
         { "path": "<PRODUCTS>/TrafficProUITests.xctest", "id": "0EEFE7D8309D0CC900401567", "type": "wrapper.cfbundle", "index": false },
+        { "path": "<PRODUCTS>/TrafficProWatch.app", "id": "0EE0FB7130AE365800CB055D", "type": "wrapper.application", "index": false, "target-membership": [ { "build-phase": "TrafficPro/copy/Embed Watch Content", "header-preservation": "remove-on-copy" } ] },
       ],
     },
   ],
@@ -37,10 +54,19 @@
       "id": "0EEFE7C0309D0CC900401567",
       "product": "Products/TrafficPro.app",
       "product-type": "application",
+      "dependencies": [
+        "TrafficProWatch",
+      ],
       "build-phases": [
         "compile-sources",
         "frameworks",
         "resources",
+        {
+          "kind": "copy",
+          "name": "Embed Watch Content",
+          "bundle-base-path": "build-products-directory",
+          "relative-path": "$(CONTENTS_FOLDER_PATH)/Watch",
+        },
       ],
       "package-product-members": [
         {
@@ -152,6 +178,64 @@
         "SWIFT_VERSION": "6.0",
         "TARGETED_DEVICE_FAMILY": "1,2",
         "TEST_TARGET_NAME": "TrafficPro",
+      },
+    }, {
+      "name": "TrafficProWatch",
+      "id": "0EE0FB7030AE365800CB055D",
+      "product": "Products/TrafficProWatch.app",
+      "product-type": "application",
+      "build-phases": [
+        "compile-sources",
+        "frameworks",
+        "resources",
+      ],
+      "package-product-members": [
+        {
+          "package": "TrafficProKit",
+          "product-name": "Domain",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "TrafficProKit",
+          "product-name": "HomeCore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "TrafficProKit",
+          "product-name": "Mocks",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "TrafficProKit",
+          "product-name": "Platform",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+      ],
+      "build-settings": {
+        "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
+        "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
+        "CODE_SIGN_STYLE": "Automatic",
+        "CURRENT_PROJECT_VERSION": "1",
+        "DEVELOPMENT_TEAM": "832TDP3BE8",
+        "ENABLE_PREVIEWS": "YES",
+        "GENERATE_INFOPLIST_FILE": "YES",
+        "INFOPLIST_KEY_CFBundleDisplayName": "Traffic Pro",
+        "INFOPLIST_KEY_UISupportedInterfaceOrientations": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown",
+        "INFOPLIST_KEY_WKCompanionAppBundleIdentifier": "mx.juanroman.traffic-pro",
+        "LD_RUNPATH_SEARCH_PATHS": [
+          "$(inherited)",
+          "@executable_path/Frameworks",
+        ],
+        "MARKETING_VERSION": "1.0",
+        "PRODUCT_BUNDLE_IDENTIFIER": "mx.juanroman.traffic-pro.watchkitapp",
+        "PRODUCT_NAME": "$(TARGET_NAME)",
+        "SDKROOT": "watchos",
+        "SKIP_INSTALL": "YES",
+        "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
+        "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
+        "SWIFT_DEFAULT_ACTOR_ISOLATION": "MainActor",
+        "SWIFT_EMIT_LOC_STRINGS": "YES",
+        "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
+        "SWIFT_VERSION": "6.0",
+        "TARGETED_DEVICE_FAMILY": "4",
+        "WATCHOS_DEPLOYMENT_TARGET": "27.2",
       },
     },
   ],

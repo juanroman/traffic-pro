@@ -15,7 +15,9 @@ public struct UserDefaultsSavedPlacesRepository: SavedPlacesRepository {
     self.key = key
   }
 
-  private var defaults: UserDefaults { suiteName.flatMap(UserDefaults.init) ?? .standard }
+  private var defaults: UserDefaults {
+    suiteName.flatMap { UserDefaults(suiteName: $0) } ?? .standard
+  }
 
   public func load() async throws -> SavedPlaces {
     guard let data = defaults.data(forKey: key) else { return SavedPlaces() }

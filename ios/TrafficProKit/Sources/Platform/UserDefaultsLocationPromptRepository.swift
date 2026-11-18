@@ -13,7 +13,9 @@ public struct UserDefaultsLocationPromptRepository: LocationPromptRepository {
     self.key = key
   }
 
-  private var defaults: UserDefaults { suiteName.flatMap(UserDefaults.init) ?? .standard }
+  private var defaults: UserDefaults {
+    suiteName.flatMap { UserDefaults(suiteName: $0) } ?? .standard
+  }
 
   public func wasDeclined() async -> Bool { defaults.bool(forKey: key) }
 

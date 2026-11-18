@@ -20,7 +20,7 @@ cd "$(dirname "$0")"
 
 SIM_NAME="${SIM_NAME:-iPhone 18 Pro}"
 SIM_OS="${SIM_OS:-27.2}" # several runtimes are installed; the name alone is ambiguous
-SWIFT_DIRS=(TrafficProKit/Sources TrafficProKit/Tests TrafficPro/TrafficPro TrafficPro/TrafficProTests TrafficPro/TrafficProUITests)
+SWIFT_DIRS=(TrafficProKit/Sources TrafficProKit/Tests TrafficPro/TrafficPro TrafficPro/TrafficProTests TrafficPro/TrafficProUITests TrafficPro/TrafficProWatch)
 PROJECT=TrafficPro/TrafficPro.xcodeproj
 SCHEME=TrafficPro
 DERIVED_DATA="${DERIVED_DATA:-build/DerivedData}" # git-ignored; shared by build/unit/ui
