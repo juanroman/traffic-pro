@@ -24,10 +24,13 @@ private struct Catalog: Decodable {
 struct LocalizationCatalogTests {
   private static let language = "es-MX"
 
-  private static func load(_ name: String) throws -> Catalog {
+  /// The app targets that own catalogs: the phone app and the watch app.
+  private static let targets = ["TrafficPro", "TrafficProWatch"]
+
+  private static func load(_ name: String, in target: String = "TrafficPro") throws -> Catalog {
     // The catalogs are compiled into .strings files in the app bundle, so read the sources.
     let folder = URL(filePath: #filePath).deletingLastPathComponent()
-      .deletingLastPathComponent().appending(path: "TrafficPro")
+      .deletingLastPathComponent().appending(path: target)
     let data = try Data(contentsOf: folder.appending(path: name))
     return try JSONDecoder().decode(Catalog.self, from: data)
   }
@@ -42,13 +45,16 @@ struct LocalizationCatalogTests {
   }
 
   @Test func everyKeyIsTranslated() throws {
-    for name in ["Localizable.xcstrings", "InfoPlist.xcstrings"] {
-      let catalog = try Self.load(name)
-      #expect(!catalog.strings.isEmpty, "\(name) is empty")
-      for (key, entry) in catalog.strings {
-        let unit = entry.localizations?[Self.language]?.stringUnit
-        #expect(unit?.state == "translated", "\(name): “\(key)” is not translated")
-        #expect(unit?.value.isEmpty == false, "\(name): “\(key)” has an empty translation")
+    for target in Self.targets {
+      for name in ["Localizable.xcstrings", "InfoPlist.xcstrings"] {
+        let catalog = try Self.load(name, in: target)
+        #expect(!catalog.strings.isEmpty, "\(target)/\(name) is empty")
+        for (key, entry) in catalog.strings {
+          let unit = entry.localizations?[Self.language]?.stringUnit
+          #expect(unit?.state == "translated", "\(target)/\(name): “\(key)” is not translated")
+          #expect(
+            unit?.value.isEmpty == false, "\(target)/\(name): “\(key)” has an empty translation")
+        }
       }
     }
   }
@@ -60,6 +66,20 @@ struct LocalizationCatalogTests {
       #expect(
         Self.placeholders(value) == Self.placeholders(key),
         "“\(key)” and its translation take different arguments")
+    }
+  }
+
+  /// An Info.plist key has no English text of its own to fall back on: without an `en` entry
+  /// Xcode writes the key's own name as the English value, and App Store Connect rejects that
+  /// (90738, "Invalid purpose string value").
+  @Test func infoPlistStringsHaveAnEnglishValue() throws {
+    for target in Self.targets {
+      let catalog = try Self.load("InfoPlist.xcstrings", in: target)
+      for (key, entry) in catalog.strings {
+        let value = entry.localizations?["en"]?.stringUnit?.value
+        #expect(value?.isEmpty == false, "\(target)/InfoPlist.xcstrings: “\(key)” has no English")
+        #expect(value != key, "\(target)/InfoPlist.xcstrings: “\(key)” is its own English")
+      }
     }
   }
 
