@@ -1,5 +1,11 @@
 # Traffic Pro
 
+[![CI](https://github.com/juanroman/traffic-pro/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/juanroman/traffic-pro/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Platform: iOS 27.2+](https://img.shields.io/badge/platform-iOS%2027.2%2B-lightgrey.svg)](ios/README.md)
+[![Swift 6](https://img.shields.io/badge/Swift-6-orange.svg)](ios/README.md)
+[![Dependabot](https://img.shields.io/badge/dependabot-enabled-025e8c.svg)](.github/dependabot.yml)
+
 A personal iPhone app that shows traffic-aware ETAs for your saved commutes. Home shows the
 commute nearest to you with one chip per route; Details opens a map and a sheet to edit routes
 and via points. It calls Google's Routes API directly, keeps commutes as JSON on the device,
@@ -43,4 +49,12 @@ How to add strings (by hand, in the app target's catalog) is in the "Languages" 
 new build.
 
 ## License
-MIT, see [`LICENSE`](LICENSE).
+MIT, see [`LICENSE`](LICENSE), with the third-party exception below.
+
+## Third-party notice
+The Google Maps logo files (`ios/TrafficPro/TrafficPro/Assets.xcassets/GoogleMapsLogo.imageset`)
+are © Google and are **not** covered by this repository's MIT license. They are included only to
+show the attribution that Google's terms require wherever Routes data is shown. If you fork this
+repo, follow [Google Maps Platform's attribution guidelines][attribution] for any use of them.
+
+[attribution]: https://developers.google.com/maps/documentation/routes/policies
