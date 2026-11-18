@@ -217,6 +217,7 @@
         "ENABLE_PREVIEWS": "YES",
         "GENERATE_INFOPLIST_FILE": "YES",
         "INFOPLIST_KEY_CFBundleDisplayName": "Traffic Pro",
+        "INFOPLIST_KEY_NSLocationWhenInUseUsageDescription": "Used on this device to show the commute that starts where you are. Your location is never sent anywhere.",
         "INFOPLIST_KEY_UISupportedInterfaceOrientations": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown",
         "INFOPLIST_KEY_WKCompanionAppBundleIdentifier": "mx.juanroman.traffic-pro",
         "LD_RUNPATH_SEARCH_PATHS": [

@@ -29,6 +29,16 @@
   never copy the file. The Google key's restrictions must allow the watch bundle ID.
 - Shared code: `Domain`, `HomeCore` (UI-free Home models), `Platform`, `Mocks`. `Features` is
   iOS-only.
+- The glance screen reuses `HomeModel` (same pick rule as the phone). Its chips, card and footer are
+  watch-sized copies of the phone's, and `Color(hex:)` and `RelativeAgeSchedule` are copies too,
+  because `Features` is iOS-only. Change one, check the other. The Google logo is the same image
+  set, at the guide's smallest height (16 pt).
+- The watch catalogs (`Localizable`, `InfoPlist`) hold only the strings the watch can show,
+  including package strings (`String(localized:)` looks in the main bundle): when the watch shows a
+  new package string, copy its entry from the phone catalog.
+- `-mock-services` on the watch uses the sample data with the user at "Home", to see the screens in
+  a simulator without Google calls: `xcrun simctl launch <watch> mx.juanroman.traffic-pro.watchkitapp
+  -mock-services` (add `-AppleLanguages "(es-MX)"` for Spanish).
 - On watchOS a bare `UserDefaults.init` reference resolves to a deprecated initializer; name
   `UserDefaults(suiteName:)` explicitly.
 

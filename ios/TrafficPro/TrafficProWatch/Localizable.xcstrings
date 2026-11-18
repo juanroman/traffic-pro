@@ -1,28 +1,436 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "No commutes yet" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "es-MX" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún no hay trayectos"
+  "sourceLanguage": "en",
+  "strings": {
+    "%lld d ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace %lld d"
           }
         }
       }
     },
-    "Open Traffic Pro on your iPhone to add a commute." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "es-MX" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abre Traffic Pro en tu iPhone para agregar un trayecto."
+    "%lld days ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace %lld días"
+          }
+        }
+      }
+    },
+    "%lld hours ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace %lld horas"
+          }
+        }
+      }
+    },
+    "%lld hr ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace %lld h"
+          }
+        }
+      }
+    },
+    "%lld min": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld min"
+          }
+        }
+      }
+    },
+    "%lld min ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace %lld min"
+          }
+        }
+      }
+    },
+    "%lld minutes ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace %lld minutos"
+          }
+        }
+      }
+    },
+    "%lld seconds ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace %lld segundos"
+          }
+        }
+      }
+    },
+    "%llds ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace %lld s"
+          }
+        }
+      }
+    },
+    "1 day ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace 1 día"
+          }
+        }
+      }
+    },
+    "1 hour ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace 1 hora"
+          }
+        }
+      }
+    },
+    "1 minute ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace 1 minuto"
+          }
+        }
+      }
+    },
+    "1 second ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace 1 segundo"
+          }
+        }
+      }
+    },
+    "Add a route first": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Primero agrega una ruta"
+          }
+        }
+      }
+    },
+    "Add your Google API key: copy ios/Secrets.example.plist to ios/TrafficPro/TrafficPro/Secrets.plist and set GOOGLE_ROUTES_API_KEY.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agrega tu clave de API de Google: copia ios/Secrets.example.plist a ios/TrafficPro/TrafficPro/Secrets.plist y define GOOGLE_ROUTES_API_KEY."
+          }
+        }
+      }
+    },
+    "Checking traffic…": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revisando el tráfico…"
+          }
+        }
+      }
+    },
+    "Continue": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar"
+          }
+        }
+      }
+    },
+    "Couldn't fetch ETAs.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudieron obtener los tiempos."
+          }
+        }
+      }
+    },
+    "Couldn't fetch this route": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo obtener esta ruta"
+          }
+        }
+      }
+    },
+    "Couldn't load your commutes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudieron cargar tus trayectos."
+          }
+        }
+      }
+    },
+    "Couldn't reach Google. Check your connection and try again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo conectar con Google. Revisa tu conexión e inténtalo de nuevo."
+          }
+        }
+      }
+    },
+    "Fastest": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La más rápida"
+          }
+        }
+      }
+    },
+    "Google couldn't route that: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google no pudo trazar esa ruta: %@"
+          }
+        }
+      }
+    },
+    "Google rejected the API key. Check its restrictions. (%@)": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google rechazó la clave de API. Revisa sus restricciones. (%@)"
+          }
+        }
+      }
+    },
+    "Google returned an error (%lld): %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google devolvió un error (%1$lld): %2$@"
+          }
+        }
+      }
+    },
+    "Google sent a response the app couldn't read (%@).": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google envió una respuesta que la app no pudo leer (%@)."
+          }
+        }
+      }
+    },
+    "Google's request limit was reached. Try again later.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se alcanzó el límite de solicitudes de Google. Inténtalo más tarde."
+          }
+        }
+      }
+    },
+    "Last viewed": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visto por última vez"
+          }
+        }
+      }
+    },
+    "Near %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerca de %@"
+          }
+        }
+      }
+    },
+    "No commutes yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay trayectos"
+          }
+        }
+      }
+    },
+    "Not now": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora no"
+          }
+        }
+      }
+    },
+    "Open Traffic Pro on your iPhone to add a commute.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre Traffic Pro en tu iPhone para agregar un trayecto."
+          }
+        }
+      }
+    },
+    "Secrets.plist couldn't be read. Check that it is a valid property list.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo leer Secrets.plist. Verifica que sea una lista de propiedades válida."
+          }
+        }
+      }
+    },
+    "Set origin and destination first": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Primero define el origen y el destino"
+          }
+        }
+      }
+    },
+    "Show the commute that starts where you are": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muestra el trayecto que comienza donde estás"
+          }
+        }
+      }
+    },
+    "Traffic Pro": {},
+    "Try Again": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reintentar"
+          }
+        }
+      }
+    },
+    "Updated %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizado %@"
+          }
+        }
+      }
+    },
+    "Your location stays on this device. It's only used to pick which commute to show.": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu ubicación se queda en este dispositivo. Solo se usa para elegir qué trayecto mostrar."
+          }
+        }
+      }
+    },
+    "just now": {
+      "extractionState": "manual",
+      "localizations": {
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "justo ahora"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }
