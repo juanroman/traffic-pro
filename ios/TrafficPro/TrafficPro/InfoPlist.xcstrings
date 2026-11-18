@@ -41,6 +41,12 @@
       "comment" : "Location permission prompt",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used on this device to show the commute that starts where you are. Your location is never sent anywhere."
+          }
+        },
         "es-MX" : {
           "stringUnit" : {
             "state" : "translated",
