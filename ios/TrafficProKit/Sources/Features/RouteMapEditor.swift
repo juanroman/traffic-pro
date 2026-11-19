@@ -49,7 +49,6 @@ struct RouteMapEditor: View {
       }
       .padding(8)
       .frame(maxHeight: .infinity, alignment: .topTrailing)
-      .allowsHitTesting(true)
     }
   }
 

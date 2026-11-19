@@ -6,7 +6,9 @@ import Observation
 final class PlacePickerModel {
   private(set) var suggestions: [PlaceSuggestion] = []
   private(set) var failed = false
-  private(set) var resolveFailed = false
+  /// Set when a chosen suggestion could not be resolved. The view clears it when the alert is
+  /// dismissed, so the next failure shows the alert again.
+  var resolveFailed = false
   private let service: any PlaceSearchService
 
   init(service: any PlaceSearchService) {

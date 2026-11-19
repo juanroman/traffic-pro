@@ -222,7 +222,7 @@ struct CommuteMapScreen: View {
       }
       .alert(
         "Delete \"\(routeName(at: pendingRouteDelete, in: commute))\"?",
-        isPresented: isConfirmingRouteDelete, presenting: pendingRouteDelete
+        item: $pendingRouteDelete
       ) { index in
         Button("Delete Route", role: .destructive) {
           Task { errorMessage = await store.deleteRoute(in: commuteID, at: index) }
@@ -231,10 +231,10 @@ struct CommuteMapScreen: View {
       } message: { index in
         Text(commute.routes.indices.contains(index) ? commute.routes[index].deletionWarning : "")
       }
-      .alert("Couldn't save", isPresented: hasError) {
+      .alert("Couldn't save", item: $errorMessage) { _ in
         Button("OK", role: .cancel) {}
-      } message: {
-        Text(errorMessage ?? "")
+      } message: { message in
+        Text(message)
       }
   }
 
@@ -263,14 +263,6 @@ struct CommuteMapScreen: View {
   private func routeName(at index: Int?, in commute: Commute) -> String {
     guard let index, commute.routes.indices.contains(index) else { return "" }
     return commute.routes[index].name
-  }
-
-  private var isConfirmingRouteDelete: Binding<Bool> {
-    Binding(get: { pendingRouteDelete != nil }, set: { if !$0 { pendingRouteDelete = nil } })
-  }
-
-  private var hasError: Binding<Bool> {
-    Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })
   }
 
   private func save(_ mutate: @escaping @MainActor (inout Commute) -> Void) {

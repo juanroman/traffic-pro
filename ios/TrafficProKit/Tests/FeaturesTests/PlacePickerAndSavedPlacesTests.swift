@@ -36,6 +36,21 @@ struct PlacePickerModelTests {
     #expect(model.resolveFailed)
   }
 
+  /// The alert clears the flag when it is dismissed; a second failure must raise it again, or the
+  /// person would never be told that the second place could not be found.
+  @Test func resolveFailureCanBeDismissedAndRaisedAgain() async {
+    let model = PlacePickerModel(service: MockPlaceSearchService())
+    let missing = PlaceSuggestion(id: "nope", title: "Nope", subtitle: "")
+    _ = await model.resolve(missing)
+    #expect(model.resolveFailed)
+
+    model.resolveFailed = false
+    #expect(model.resolveFailed == false)
+
+    _ = await model.resolve(missing)
+    #expect(model.resolveFailed)
+  }
+
   @Test func searchFailureIsReported() async {
     struct Broken: PlaceSearchService {
       func suggestions(for query: String) async throws -> [PlaceSuggestion] {

@@ -32,7 +32,6 @@ struct RouteMapView: View {
   /// directly made the full-screen copy open on a world view and ignore zoom.
   /// nil until a camera has settled, then the route is fitted.
   @Binding var cameraRegion: MKCoordinateRegion?
-  private let fittedRegion: MKCoordinateRegion
 
   struct DragState: Equatable {
     var index: Int
@@ -54,8 +53,13 @@ struct RouteMapView: View {
     self.onAdd = onAdd
     self.onMove = onMove
     _cameraRegion = cameraRegion
-    // Fit the route until a camera has been chosen; later edits keep the user's pan/zoom.
-    fittedRegion = MapRegionFit.region(fitting: [origin.latLng, destination.latLng] + via)
+  }
+
+  /// Fit the route until a camera has been chosen; later edits keep the user's pan/zoom.
+  /// Computed where it is used, and only then (`??` evaluates it lazily): `init` runs on every
+  /// pass of the parent's body and should stay a plain copy of the inputs.
+  private var fittedRegion: MKCoordinateRegion {
+    MapRegionFit.region(fitting: [origin.latLng, destination.latLng] + via)
   }
 
   var body: some View {

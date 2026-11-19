@@ -27,6 +27,7 @@ struct PlacePickerView: View {
   }
 
   var body: some View {
+    @Bindable var model = model
     NavigationStack {
       List {
         Section {
@@ -56,7 +57,7 @@ struct PlacePickerView: View {
           Button("Cancel") { dismiss() }
         }
       }
-      .alert("Couldn't find that place", isPresented: resolveFailed) {
+      .alert("Couldn't find that place", isPresented: $model.resolveFailed) {
         Button("OK", role: .cancel) {}
       }
     }
@@ -126,10 +127,6 @@ struct PlacePickerView: View {
       assigning = nil
       choose(saved)
     }
-  }
-
-  private var resolveFailed: Binding<Bool> {
-    Binding(get: { model.resolveFailed }, set: { _ in })
   }
 
   private func choose(_ place: NamedPoint?) {
