@@ -58,9 +58,12 @@ jobs:
       - name: UI smoke tests
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: ios/check.sh smoke
+      # Always, and named per attempt: a rerun used to replace the failed attempt's bundle, and
+      # a run that timed out or passed on its second try left nothing to look at. The bundles
+      # also carry each UI test's step timings, which is how a slow test is found.
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        if: ${{ !success() }}
+        if: ${{ always() }}
         with:
-          name: xcresult
+          name: xcresult-attempt-${{ github.run_attempt }}
           path: results/
           retention-days: 7

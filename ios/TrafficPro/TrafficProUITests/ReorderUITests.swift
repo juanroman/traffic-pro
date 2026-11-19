@@ -15,11 +15,14 @@ final class ReorderUITests: XCTestCase {
     app.chooseFromHomeMenu("home-manage")
     XCTAssertEqual(commuteTitles(in: app), ["Work to Home", "Home to Work"])
     dragRow(1, aboveRow: 0, in: app)
-    XCTAssertEqual(commuteTitles(in: app), ["Home to Work", "Work to Home"])
+    let reordered = ["Home to Work", "Work to Home"]
+    waitUntil { commuteTitles(in: app) == reordered }
+    XCTAssertEqual(commuteTitles(in: app), reordered)
     app.buttons["Done"].tap()
     // Home's selector follows the new order.
     XCTAssertTrue(app.buttons["home-more"].waitForExistence(timeout: 5))
-    XCTAssertEqual(selectorOrder(in: app), ["Home to Work", "Work to Home"])
+    waitUntil { selectorOrder(in: app) == reordered }
+    XCTAssertEqual(selectorOrder(in: app), reordered)
   }
 
   func testRoutesCanBeReordered() throws {
@@ -32,6 +35,7 @@ final class ReorderUITests: XCTestCase {
     app.buttons["Edit"].tap()
     dragRow(1, aboveRow: 0, in: app)
     app.buttons["Done"].tap()
+    waitUntil { routeIsAbove("Mordor", "City", in: app) }
     XCTAssertTrue(routeIsAbove("Mordor", "City", in: app))
   }
 
@@ -68,7 +72,24 @@ final class ReorderUITests: XCTestCase {
   }
 
   private func routeIsAbove(_ upper: String, _ lower: String, in app: XCUIApplication) -> Bool {
-    app.buttons[upper].frame.minY < app.buttons[lower].frame.minY
+    // `exists` first: asking a missing element for its frame fails the test on the spot, and
+    // while polling a row can be missing for a moment.
+    guard app.buttons[upper].exists, app.buttons[lower].exists else { return false }
+    return app.buttons[upper].frame.minY < app.buttons[lower].frame.minY
+  }
+
+  /// Polls until `condition` holds or the time is up, and says which. A reorder is applied
+  /// after an asynchronous save, so the list shows the new order a moment after the drop, not
+  /// at the instant the drag ends: asserting right away races that save, and loses on a busy
+  /// machine. Callers still assert afterwards, so a failure reports what was on screen.
+  @discardableResult
+  private func waitUntil(timeout: TimeInterval = 5, _ condition: () -> Bool) -> Bool {
+    let deadline = Date().addingTimeInterval(timeout)
+    while Date() < deadline {
+      if condition() { return true }
+      RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+    }
+    return condition()
   }
 
   /// Drags a row's "Reorder …" handle (visible in edit mode) above another row's handle.
