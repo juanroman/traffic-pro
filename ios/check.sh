@@ -6,6 +6,7 @@
 #   ios/check.sh package package tests (warnings are errors)
 #   ios/check.sh build   app build-for-testing on a simulator
 #   ios/check.sh unit    app unit tests (needs `build` first)
+#   ios/check.sh device  unsigned arm64e device build, as TestFlight builds it (not run on CI)
 #   ios/check.sh smoke   the few UI tests CI runs on every PR, retrying a failed test once
 #                        (needs `build` first)
 #   ios/check.sh ui [Class[/test] ...]
@@ -100,6 +101,27 @@ stage_build() {
     $(result_bundle_args build) -quiet
 }
 
+# Production builds are arm64e (arm64e.xcconfig), but simulator builds never are, so nothing above
+# would notice a break. This compiles the apps for a real device without signing and checks that
+# both binaries really got an arm64e slice. Not run on CI (a device build is slow there).
+stage_device() {
+  ensure_secrets_file
+  echo "--- device build, arm64e (xcodebuild, no signing) ---"
+  local derived="$DERIVED_DATA-device"
+  # shellcheck disable=SC2046
+  xcodebuild build -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
+    -destination 'generic/platform=iOS' -derivedDataPath "$derived" \
+    -xcconfig arm64e.xcconfig CODE_SIGNING_ALLOWED=NO \
+    $(result_bundle_args device) -quiet
+  local app="$derived/Build/Products/Release-iphoneos/TrafficPro.app"
+  for binary in "$app/TrafficPro" "$app/Watch/TrafficProWatch.app/TrafficProWatch"; do
+    if ! lipo -archs "$binary" | grep -qw arm64e; then
+      echo "no arm64e slice in $binary: $(lipo -archs "$binary")" >&2
+      exit 1
+    fi
+  done
+}
+
 # $1 = result bundle name; remaining args = -only-testing:... selectors
 run_tests() {
   local name="$1"
@@ -148,6 +170,7 @@ case "${1:-all}" in
   package) stage_package ;;
   build) stage_build ;;
   unit) stage_unit ;;
+  device) stage_device ;;
   smoke) stage_smoke ;;
   ui)
     shift
@@ -159,10 +182,11 @@ case "${1:-all}" in
     stage_build
     stage_unit
     stage_ui
+    stage_device
     echo "iOS checks passed."
     ;;
   *)
-    echo "usage: ios/check.sh [all|lint|package|build|unit|smoke|ui]" >&2
+    echo "usage: ios/check.sh [all|lint|package|build|unit|smoke|ui|device]" >&2
     exit 2
     ;;
 esac
