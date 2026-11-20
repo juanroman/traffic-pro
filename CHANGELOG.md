@@ -10,10 +10,17 @@ Each entry is `version (build)`: the version is `MARKETING_VERSION`, the build i
 
 ## [Unreleased]
 
+Nothing yet.
+
+## 1.0 (202611201730) - 2026-11-20
+
+Commit `8cea687`, tag `testflight/1.0-202611201730`.
+
 ### Changed
-- Production (TestFlight) builds are now arm64e, so the iPhone and watch apps get pointer
-  authentication. Simulator builds, Xcode runs and CI stay arm64. `ios/check.sh device` checks
-  the arm64e build. Not yet tried on a real device (PR #14).
+- The apps are built as arm64e, so the iPhone and watch apps get pointer authentication.
+  Simulator builds, Xcode runs and CI stay arm64. `ios/check.sh device` checks the arm64e build
+  and `ios/upload-testflight.sh` tags every upload (PR #14, #15). Not yet tried on a real device
+  at the time of the upload.
 
 ## 1.0 (202611200924) - 2026-11-20
 
