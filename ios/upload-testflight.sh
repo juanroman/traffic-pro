@@ -24,6 +24,7 @@ PLIST
 
 xcodebuild -project TrafficPro/TrafficPro.xcodeproj -scheme TrafficPro -configuration Release \
   -destination 'generic/platform=iOS' -archivePath "$WORK/TrafficPro.xcarchive" \
+  -xcconfig arm64e.xcconfig \
   CURRENT_PROJECT_VERSION="$BUILD" -allowProvisioningUpdates archive -quiet
 xcodebuild -exportArchive -archivePath "$WORK/TrafficPro.xcarchive" -exportPath "$WORK/export" \
   -exportOptionsPlist "$WORK/ExportOptions.plist" -allowProvisioningUpdates

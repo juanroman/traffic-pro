@@ -1,0 +1,15 @@
+// Production (TestFlight / App Store) builds only. Pass it on the command line:
+//   xcodebuild -xcconfig ios/arm64e.xcconfig ...
+// Do NOT attach it to the project or targets.
+//
+// Why a command-line xcconfig: Xcode builds the local TrafficProKit package as its own project,
+// so project and target build settings never reach it. Only a command-line override does. With
+// pointer authentication on in the project, the apps become arm64e while the package stays
+// arm64, and the build fails with "built for incompatible target". See
+// docs/xcode-security-settings.md.
+//
+// The [sdk=...] conditions match device SDKs only, so simulator builds stay plain arm64.
+// "arm64 arm64e" keeps an arm64 slice as a fallback; the package gets the same slices.
+ENABLE_POINTER_AUTHENTICATION = YES
+ARCHS[sdk=iphoneos*] = arm64 arm64e
+ARCHS[sdk=watchos*] = arm64 arm64e
