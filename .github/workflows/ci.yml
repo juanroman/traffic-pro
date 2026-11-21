@@ -21,6 +21,39 @@ env:
   RESULTS_DIR: ${{ github.workspace }}/results
 
 jobs:
+  # A PR that only touches Markdown or the license skips the slow jobs (package tests, app).
+  # Skipped jobs still report as passed to the required checks on main, which a workflow-level
+  # `paths-ignore` would not do (the PR would wait forever). Lint always runs: it is cheap and
+  # also scans tracked files for an API key. Pushes to main always run everything.
+  changes:
+    name: Which files changed
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      code: ${{ steps.diff.outputs.code }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - id: diff
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.base_ref }}
+        run: |
+          if [[ "$EVENT" != "pull_request" ]]; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Three dots: only what this PR changed, not what main gained since it branched.
+          changed="$(git diff --name-only "origin/$BASE...HEAD")"
+          echo "$changed"
+          if grep -qvE '\.md$|^LICENSE$' <<<"$changed"; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Only Markdown/license files changed: skipping package tests and the app job."
+            echo "code=false" >> "$GITHUB_OUTPUT"
+          fi
+
   lint:
     name: Lint (secrets, swift-format, SwiftLint)
     runs-on: xcode-27
@@ -33,6 +66,8 @@ jobs:
 
   package-tests:
     name: Package tests
+    needs: changes
+    if: ${{ needs.changes.outputs.code == 'true' }}
     runs-on: xcode-27
     timeout-minutes: 15
     steps:
@@ -44,6 +79,8 @@ jobs:
   # runs locally (`ios/check.sh`) or on demand from the "UI tests (full)" workflow.
   app:
     name: App (build, unit tests, UI smoke tests)
+    needs: changes
+    if: ${{ needs.changes.outputs.code == 'true' }}
     runs-on: xcode-27
     timeout-minutes: 30
     steps:
