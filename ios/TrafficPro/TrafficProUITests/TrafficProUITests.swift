@@ -75,28 +75,25 @@ final class TrafficProUITests: XCTestCase {
   }
 
   @MainActor
-  func testHomeShortcutIsSetOnceThenReused() throws {
+  func testSearchedPlaceShowsUnderRecentInTheOtherField() throws {
     let app = XCUIApplication()
     app.launchArguments = LaunchArguments.base
     app.launch()
     app.openCommute("Work to Home")
     app.buttons["Edit"].tap()  // the places only show while editing
 
-    // First use: Home is unset, so tapping it asks for an address.
     app.buttons["endpoint-From"].tap()
-    app.buttons["shortcut-Home"].tap()
     let search = app.searchFields.firstMatch
     search.tap()
     search.typeText("Sat")
     app.buttons["place-Satélite"].tap()
-    waitForLabel(of: app.buttons["endpoint-From"], toContain: "Home")
+    waitForLabel(of: app.buttons["endpoint-From"], toContain: "Satélite")
 
-    // Second use: the shortcut now fills the field directly, no search.
+    // The place is now part of a commute, so it is offered without searching.
     app.buttons["endpoint-To"].tap()
-    XCTAssertTrue(app.buttons["shortcut-Home"].waitForExistence(timeout: 5))
-    XCTAssertTrue(app.buttons["shortcut-Home"].label.contains("Mexico City"))
-    app.buttons["shortcut-Home"].tap()
-    waitForLabel(of: app.buttons["endpoint-To"], toContain: "Home")
+    XCTAssertTrue(app.buttons["recent-Satélite"].waitForExistence(timeout: 5))
+    app.buttons["recent-Satélite"].tap()
+    waitForLabel(of: app.buttons["endpoint-To"], toContain: "Satélite")
   }
 
   @MainActor

@@ -62,7 +62,7 @@ struct NewCommuteView: View {
           title: endpoint.title,
           selected: endpoint == .origin ? origin : destination,
           service: placeSearch,
-          savedPlaces: savedPlaces
+          recents: store.recentPlaces(including: savedPlaces.places)
         ) { place in
           if endpoint == .origin { origin = place } else { destination = place }
         }

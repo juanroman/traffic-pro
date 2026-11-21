@@ -25,6 +25,11 @@ public final class ConfigStore {
     self.repository = repository
   }
 
+  /// Places for the picker's "Recent" list; see `RecentPlaces`.
+  public func recentPlaces(including saved: SavedPlaces = SavedPlaces()) -> [NamedPoint] {
+    RecentPlaces.make(from: entries.map(\.commute), saved: saved)
+  }
+
   public func entry(id: CommuteEntry.ID) -> CommuteEntry? {
     entries.first { $0.id == id }
   }
