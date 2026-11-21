@@ -9,7 +9,6 @@ import SwiftUI
 struct NewCommuteView: View {
   let store: ConfigStore
   let placeSearch: any PlaceSearchService
-  let savedPlaces: SavedPlacesStore
   /// Called with the new commute's id once it is saved, just before the form closes.
   let onCreated: (CommuteEntry.ID) -> Void
 
@@ -62,10 +61,13 @@ struct NewCommuteView: View {
           title: endpoint.title,
           selected: endpoint == .origin ? origin : destination,
           service: placeSearch,
-          recents: store.recentPlaces(including: savedPlaces.places)
-        ) { place in
-          if endpoint == .origin { origin = place } else { destination = place }
-        }
+          recents: store.recentPlaces,
+          onRename: { place, name in
+            Task { await store.renamePlace(at: place.latLng, to: name) }
+          },
+          onSelect: { place in
+            if endpoint == .origin { origin = place } else { destination = place }
+          })
       }
       .alert("Couldn't save", isPresented: hasError) {
         Button("OK", role: .cancel) {}

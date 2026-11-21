@@ -12,8 +12,11 @@ Each entry is `version (build)`: the version is `MARKETING_VERSION`, the build i
 
 ### Changed
 - Choosing a place for a commute no longer shows fixed Home and Work shortcuts. The picker lists
-  the places from your other commutes under "Recent" instead, so you can reuse any place. Your
-  old Home and Work are kept in that list.
+  the places from your other commutes under "Recent", so you can reuse any place.
+- Long-press a place under "Recent" and choose Rename to give it a name like "Home". It changes
+  in every commute that uses that place.
+- The old Home and Work shortcut settings are gone. Places you picked for a commute are kept; one
+  you only saved as a shortcut and never used in a commute no longer shows up.
 
 ## 1.0 (202611201730) - 2026-11-20
 

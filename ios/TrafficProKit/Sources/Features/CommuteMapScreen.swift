@@ -11,7 +11,6 @@ struct CommuteMapScreen: View {
   let store: ConfigStore
   let router: AppRouter
   let placeSearch: any PlaceSearchService
-  let savedPlaces: SavedPlacesStore
   let etaService: any ETAService
   let commuteID: CommuteEntry.ID
 
@@ -43,13 +42,12 @@ struct CommuteMapScreen: View {
 
   init(
     store: ConfigStore, router: AppRouter, placeSearch: any PlaceSearchService,
-    savedPlaces: SavedPlacesStore, etaService: any ETAService,
+    etaService: any ETAService,
     routePreview: any RoutePreviewService, commuteID: CommuteEntry.ID
   ) {
     self.store = store
     self.router = router
     self.placeSearch = placeSearch
-    self.savedPlaces = savedPlaces
     self.etaService = etaService
     self.commuteID = commuteID
     _lines = State(initialValue: CommuteLinesModel(service: routePreview))
@@ -197,12 +195,15 @@ struct CommuteMapScreen: View {
           title: endpoint.title,
           selected: endpoint == .origin ? commute.origin : commute.destination,
           service: placeSearch,
-          recents: store.recentPlaces(including: savedPlaces.places)
-        ) { place in
-          save { commute in
-            if endpoint == .origin { commute.origin = place } else { commute.destination = place }
-          }
-        }
+          recents: store.recentPlaces,
+          onRename: { place, name in
+            Task { await store.renamePlace(at: place.latLng, to: name) }
+          },
+          onSelect: { place in
+            save { commute in
+              if endpoint == .origin { commute.origin = place } else { commute.destination = place }
+            }
+          })
       }
       .alert("Rename Commute", isPresented: $isRenaming) {
         TextField("Name", text: $draftName)

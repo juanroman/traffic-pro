@@ -100,9 +100,3 @@ public protocol PlaceSearchService: Sendable {
 public enum PlaceSearchError: Error, Equatable, Sendable {
   case notFound
 }
-
-/// Where the user's "Home" and "Work" shortcuts are kept (on the device).
-public protocol SavedPlacesRepository: Sendable {
-  func load() async throws -> SavedPlaces
-  func save(_ places: SavedPlaces) async throws
-}

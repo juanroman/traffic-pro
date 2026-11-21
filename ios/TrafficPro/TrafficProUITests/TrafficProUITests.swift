@@ -97,6 +97,36 @@ final class TrafficProUITests: XCTestCase {
   }
 
   @MainActor
+  func testRenamedPlaceKeepsItsNameInTheOtherField() throws {
+    let app = XCUIApplication()
+    app.launchArguments = LaunchArguments.base
+    app.launch()
+    app.openCommute("Work to Home")
+    app.buttons["Edit"].tap()
+
+    app.buttons["endpoint-From"].tap()
+    let search = app.searchFields.firstMatch
+    search.tap()
+    search.typeText("Sat")
+    app.buttons["place-Satélite"].tap()
+    waitForLabel(of: app.buttons["endpoint-From"], toContain: "Satélite")
+
+    app.buttons["endpoint-To"].tap()
+    let recent = app.buttons["recent-Satélite"]
+    XCTAssertTrue(recent.waitForExistence(timeout: 5))
+    recent.press(forDuration: 1)
+    app.buttons["Rename…"].tap()
+    let field = app.alerts.textFields["Name"]
+    XCTAssertTrue(field.waitForExistence(timeout: 5))
+    field.clearAndType("Casa")
+    app.alerts.buttons["Rename"].tap()
+    XCTAssertTrue(app.buttons["recent-Casa"].waitForExistence(timeout: 5))
+    app.buttons["recent-Casa"].tap()
+    waitForLabel(of: app.buttons["endpoint-To"], toContain: "Casa")
+    waitForLabel(of: app.buttons["endpoint-From"], toContain: "Casa")
+  }
+
+  @MainActor
   func testAddRenameRecolorAndDeleteARoute() throws {
     let app = XCUIApplication()
     app.launchArguments = LaunchArguments.base

@@ -9,7 +9,6 @@ import SwiftUI
 @main
 struct TrafficProApp: App {
   @State private var store: ConfigStore
-  @State private var savedPlaces: SavedPlacesStore
   @State private var router = AppRouter()
   private let placeSearch: any PlaceSearchService
   private let etaService: any ETAService
@@ -79,19 +78,15 @@ struct TrafficProApp: App {
 
     if useMocks {
       placeSearch = MockPlaceSearchService()
-      _savedPlaces = State(
-        initialValue: SavedPlacesStore(repository: InMemorySavedPlacesRepository()))
     } else {
       placeSearch = MapKitPlaceSearchService()
-      _savedPlaces = State(
-        initialValue: SavedPlacesStore(repository: UserDefaultsSavedPlacesRepository()))
     }
   }
 
   var body: some Scene {
     WindowGroup {
       RootView(
-        store: store, router: router, placeSearch: placeSearch, savedPlaces: savedPlaces,
+        store: store, router: router, placeSearch: placeSearch,
         routePreview: routePreview, etaService: etaService, location: location,
         recents: recents, locationPrompt: locationPrompt)
     }

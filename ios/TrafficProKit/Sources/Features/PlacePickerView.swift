@@ -8,19 +8,25 @@ struct PlacePickerView: View {
   let title: String
   let selected: NamedPoint?
   let recents: [NamedPoint]
+  /// Renames the place everywhere it is used (the caller's store does the work).
+  let onRename: (NamedPoint, String) -> Void
   let onSelect: (NamedPoint?) -> Void
 
   @State private var model: PlacePickerModel
   @State private var query = ""
+  @State private var renaming: NamedPoint?
+  @State private var draftName = ""
   @Environment(\.dismiss) private var dismiss
 
   init(
     title: String, selected: NamedPoint?, service: any PlaceSearchService,
-    recents: [NamedPoint], onSelect: @escaping (NamedPoint?) -> Void
+    recents: [NamedPoint], onRename: @escaping (NamedPoint, String) -> Void,
+    onSelect: @escaping (NamedPoint?) -> Void
   ) {
     self.title = title
     self.selected = selected
     self.recents = recents
+    self.onRename = onRename
     self.onSelect = onSelect
     _model = State(initialValue: PlacePickerModel(service: service))
   }
@@ -39,6 +45,12 @@ struct PlacePickerView: View {
               }
               .foregroundStyle(.primary)
               .accessibilityIdentifier("recent-\(place.label)")
+              .contextMenu {
+                Button("Rename…", systemImage: "pencil") {
+                  draftName = place.label
+                  renaming = place
+                }
+              }
             }
           }
         }
@@ -58,10 +70,21 @@ struct PlacePickerView: View {
           Button("Cancel") { dismiss() }
         }
       }
+      .alert("Rename Place", isPresented: isRenaming) {
+        TextField("Name", text: $draftName)
+        Button("Rename") {
+          if let place = renaming { onRename(place, draftName) }
+        }
+        Button("Cancel", role: .cancel) {}
+      }
       .alert("Couldn't find that place", isPresented: $model.resolveFailed) {
         Button("OK", role: .cancel) {}
       }
     }
+  }
+
+  private var isRenaming: Binding<Bool> {
+    Binding(get: { renaming != nil }, set: { if !$0 { renaming = nil } })
   }
 
   @ViewBuilder private var results: some View {
