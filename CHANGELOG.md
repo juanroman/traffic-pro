@@ -10,6 +10,12 @@ Each entry is `version (build)`: the version is `MARKETING_VERSION`, the build i
 
 ## [Unreleased]
 
+Nothing yet.
+
+## 1.0 (202611210018) - 2026-11-21
+
+Commit `3c59b2a`, tag `testflight/1.0-202611210018`.
+
 ### Changed
 - Choosing a place for a commute no longer shows fixed Home and Work shortcuts. The picker lists
   the places from your other commutes under "Recent", so you can reuse any place.
