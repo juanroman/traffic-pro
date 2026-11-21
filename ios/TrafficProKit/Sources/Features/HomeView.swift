@@ -10,7 +10,6 @@ struct HomeView: View {
   let router: AppRouter
   let model: HomeModel
   let placeSearch: any PlaceSearchService
-  let savedPlaces: SavedPlacesStore
   let location: any LocationProvider
 
   @State private var isAdding = false
@@ -24,7 +23,7 @@ struct HomeView: View {
       .navigationTitle("ETAs")
       .toolbar { toolbar }
       .sheet(isPresented: $isAdding, onDismiss: openCreatedCommute) {
-        NewCommuteView(store: store, placeSearch: placeSearch, savedPlaces: savedPlaces) { id in
+        NewCommuteView(store: store, placeSearch: placeSearch) { id in
           createdCommute = id
         }
       }

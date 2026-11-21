@@ -26,8 +26,25 @@ public final class ConfigStore {
   }
 
   /// Places for the picker's "Recent" list; see `RecentPlaces`.
-  public func recentPlaces(including saved: SavedPlaces = SavedPlaces()) -> [NamedPoint] {
-    RecentPlaces.make(from: entries.map(\.commute), saved: saved)
+  public var recentPlaces: [NamedPoint] { RecentPlaces.make(from: entries.map(\.commute)) }
+
+  /// Gives a place a new name everywhere it is used: every commute origin or destination at
+  /// `point`'s coordinates. Places are matched by coordinates, like the Recent list, so
+  /// "Home" stays "Home" in all the commutes that start or end there.
+  @discardableResult
+  public func renamePlace(at point: LatLng, to name: String) async -> String? {
+    let label = name.trimmingCharacters(in: .whitespaces)
+    guard !label.isEmpty else { return nil }
+    var updated = entries
+    for index in updated.indices {
+      if updated[index].commute.origin?.latLng == point {
+        updated[index].commute.origin?.label = label
+      }
+      if updated[index].commute.destination?.latLng == point {
+        updated[index].commute.destination?.label = label
+      }
+    }
+    return await apply(updated)
   }
 
   public func entry(id: CommuteEntry.ID) -> CommuteEntry? {

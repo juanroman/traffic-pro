@@ -11,7 +11,6 @@
       store: ConfigStore(repository: repository),
       router: AppRouter(),
       placeSearch: MockPlaceSearchService(),
-      savedPlaces: SavedPlacesStore(repository: InMemorySavedPlacesRepository()),
       routePreview: MockRoutePreviewService(),
       etaService: MockETAService(repository: repository),
       location: FixedLocationProvider(authorization: .authorized, location: SampleData.home.latLng),
