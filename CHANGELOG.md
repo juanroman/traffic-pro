@@ -10,7 +10,10 @@ Each entry is `version (build)`: the version is `MARKETING_VERSION`, the build i
 
 ## [Unreleased]
 
-Nothing yet.
+### Changed
+- Choosing a place for a commute no longer shows fixed Home and Work shortcuts. The picker lists
+  the places from your other commutes under "Recent" instead, so you can reuse any place. Your
+  old Home and Work are kept in that list.
 
 ## 1.0 (202611201730) - 2026-11-20
 

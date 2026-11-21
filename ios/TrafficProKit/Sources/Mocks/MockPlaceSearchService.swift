@@ -2,8 +2,7 @@ import Domain
 import Foundation
 
 /// A fixed list of Mexico City places filtered by substring; no network.
-/// Deliberately has no "Home"/"Work" entries: those are keyword shortcuts
-/// (`SavedPlaces`), not search results.
+/// Deliberately has no "Home"/"Work" entries: those names only come from the user's commutes.
 public struct MockPlaceSearchService: PlaceSearchService {
   public static let address = "Mexico City, CDMX"
 

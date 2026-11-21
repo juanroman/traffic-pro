@@ -197,7 +197,7 @@ struct CommuteMapScreen: View {
           title: endpoint.title,
           selected: endpoint == .origin ? commute.origin : commute.destination,
           service: placeSearch,
-          savedPlaces: savedPlaces
+          recents: store.recentPlaces(including: savedPlaces.places)
         ) { place in
           save { commute in
             if endpoint == .origin { commute.origin = place } else { commute.destination = place }
