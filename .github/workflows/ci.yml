@@ -21,10 +21,11 @@ env:
   RESULTS_DIR: ${{ github.workspace }}/results
 
 jobs:
-  # A PR that only touches Markdown or the license skips the slow jobs (package tests, app).
-  # Skipped jobs still report as passed to the required checks on main, which a workflow-level
-  # `paths-ignore` would not do (the PR would wait forever). Lint always runs: it is cheap and
-  # also scans tracked files for an API key. Pushes to main always run everything.
+  # A PR or a push to main that only touches Markdown or the license skips the slow jobs
+  # (package tests, app). Skipped jobs still report as passed to the required checks on main,
+  # which a workflow-level `paths-ignore` would not do (the PR would wait forever). Lint always
+  # runs: it is cheap and also scans tracked files for an API key. When the changed files can't
+  # be determined (first push, force push), everything runs.
   changes:
     name: Which files changed
     runs-on: ubuntu-latest
@@ -39,13 +40,20 @@ jobs:
         env:
           EVENT: ${{ github.event_name }}
           BASE: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
         run: |
-          if [[ "$EVENT" != "pull_request" ]]; then
+          if [[ "$EVENT" == "pull_request" ]]; then
+            # Three dots: only what this PR changed, not what main gained since it branched.
+            range="origin/$BASE...HEAD"
+          else
+            # A push: everything since the previous tip of main.
+            range="$BEFORE...HEAD"
+          fi
+          if ! changed="$(git diff --name-only "$range")"; then
+            echo "Could not diff $range: running everything."
             echo "code=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          # Three dots: only what this PR changed, not what main gained since it branched.
-          changed="$(git diff --name-only "origin/$BASE...HEAD")"
           echo "$changed"
           if grep -qvE '\.md$|^LICENSE$' <<<"$changed"; then
             echo "code=true" >> "$GITHUB_OUTPUT"
