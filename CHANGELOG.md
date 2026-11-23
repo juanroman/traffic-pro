@@ -10,8 +10,7 @@ Each entry is `version (build)`: the version is `MARKETING_VERSION`, the build i
 
 ## [Unreleased]
 
-### Changed
-- Code scanning (CodeQL) now runs from its own workflow and scans the GitHub workflow files only. It cannot scan the Swift code: its build tracer breaks the Swift macro plugin on the CI runner.
+Nothing yet.
 
 ## 1.0 (202611210018) - 2026-11-21
 
