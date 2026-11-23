@@ -12,6 +12,18 @@ Security build settings decisions for TrafficPro. Last audited 2026-11-18.
   - `com.apple.security.hardened-process.platform-restrictions-string` = `2`
   - `com.apple.security.hardened-process.checked-allocations` (hardware memory tagging) with `soft-mode`, so tag faults are reported without terminating the app. Revisit and turn soft mode off once no simulated crash reports remain.
 
+## Guarded by `ios/check.sh security`
+
+`ios/check.sh lint` (so CI too) runs `stage_security`, which fails when:
+
+- `ENABLE_ENHANCED_SECURITY` or `ENABLE_USER_SCRIPT_SANDBOXING` is not `YES` in the project.
+- Any of the four hardened-process entitlements above (`hardened-process`, `hardened-heap`, `dyld-ro`, `checked-allocations`) is not `true`.
+- The entitlements file holds anything outside `com.apple.security.hardened-process*`. A new entitlement widens what the app may do, so allow it in `check.sh` on purpose when you add one.
+- A tracked file mentions `NSAllowsArbitraryLoads`, `NSExceptionAllowsInsecureHTTPLoads` or `NSExceptionDomains` (App Transport Security weakened; every request must be HTTPS).
+- `gitleaks` finds a secret anywhere in the git history (matches are redacted). It complements the Google-key pattern check in the lint stage. Install with `brew install gitleaks`.
+
+Not guarded: the `arm64e` settings (`ios/check.sh device` covers them locally) and `soft-mode`.
+
 ## Pointer authentication (arm64e): production builds only
 
 `ios/arm64e.xcconfig` turns on `ENABLE_POINTER_AUTHENTICATION` and sets `ARCHS` to `arm64 arm64e` for the `iphoneos` and `watchos` SDKs. `ios/upload-testflight.sh` passes it with `-xcconfig`, so TestFlight builds are arm64e. Xcode runs, `ios/check.sh` and CI use the project settings, where `ENABLE_POINTER_AUTHENTICATION` stays `NO` on `TrafficPro` and `TrafficProWatch`, so they stay arm64. Chosen so a plain Run or Archive in Xcode keeps working.
