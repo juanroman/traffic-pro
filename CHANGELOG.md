@@ -10,7 +10,8 @@ Each entry is `version (build)`: the version is `MARKETING_VERSION`, the build i
 
 ## [Unreleased]
 
-Nothing yet.
+### Changed
+- Code scanning (CodeQL) now builds the Swift code with Xcode 27.2 through its own workflow, because GitHub's default setup used an older Swift and its build failed.
 
 ## 1.0 (202611210018) - 2026-11-21
 
