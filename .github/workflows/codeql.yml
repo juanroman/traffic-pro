@@ -47,6 +47,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - if: matrix.language == 'swift'
         run: sudo xcode-select -s "$XCODE_APP"
+      # CodeQL's tracer is x86_64 and breaks the arm64-only `sandbox-exec` that Xcode uses to
+      # evaluate package manifests ("Bad CPU type in executable"), so turn that sandbox off here.
+      - if: matrix.language == 'swift'
+        run: |
+          defaults write com.apple.dt.Xcode IDEPackageSupportDisableManifestSandbox -bool YES
+          defaults write com.apple.dt.Xcode IDEPackageSupportDisableExtensionSandbox -bool YES
       - uses: github/codeql-action/init@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
         with:
           languages: ${{ matrix.language }}
