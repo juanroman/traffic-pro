@@ -2,7 +2,8 @@
 # "Is the iOS project green?"
 #
 #   ios/check.sh [all]   the full local gate: every stage below, with all UI tests
-#   ios/check.sh lint    secrets are not tracked, swift-format, SwiftLint
+#   ios/check.sh lint    secrets are not tracked, security guards, swift-format, SwiftLint
+#   ios/check.sh security  only the security guards (part of lint)
 #   ios/check.sh package package tests (warnings are errors)
 #   ios/check.sh build   app build-for-testing on a simulator
 #   ios/check.sh unit    app unit tests (needs `build` first)
@@ -46,6 +47,53 @@ result_bundle_args() { # $1 = stage name
   fi
 }
 
+# Guards that fail when a hardening decision is undone by accident (docs/xcode-security-settings.md)
+# or a secret is committed. Part of `lint`, so CI runs it on every PR.
+stage_security() {
+  echo "--- security: Enhanced Security settings and entitlements ---"
+  local project_file="$PROJECT/project.xcproj" entitlements=TrafficPro/TrafficPro/TrafficPro.entitlements
+  local setting
+  for setting in ENABLE_ENHANCED_SECURITY ENABLE_USER_SCRIPT_SANDBOXING; do
+    grep -q "\"$setting\": \"YES\"" "$project_file" || {
+      echo "$setting is not YES in $project_file" >&2
+      exit 1
+    }
+  done
+  local key
+  for key in hardened-process hardened-process.hardened-heap hardened-process.dyld-ro \
+    hardened-process.checked-allocations; do
+    plutil -convert json -o - "$entitlements" | grep -q "\"com.apple.security.$key\":true" || {
+      echo "Entitlement com.apple.security.$key is not true in $entitlements" >&2
+      exit 1
+    }
+  done
+  # Any other entitlement widens what the app may do, so adding one has to be a decision made here.
+  local unexpected
+  unexpected="$(plutil -convert json -o - "$entitlements" | tr ',' '\n' | grep -o '"com\.apple\.[^"]*"' \
+    | grep -v '"com\.apple\.security\.hardened-process' || true)"
+  if [[ -n "$unexpected" ]]; then
+    echo "Unexpected entitlement(s) in $entitlements (allow them in check.sh if intended):" >&2
+    echo "$unexpected" >&2
+    exit 1
+  fi
+
+  echo "--- security: App Transport Security is not weakened ---"
+  # Every request must use HTTPS: no arbitrary-loads switch and no per-domain exceptions.
+  if hits="$(git ls-files -z .. | xargs -0 grep -I -l 'NSAllowsArbitraryLoads\|NSExceptionAllowsInsecureHTTPLoads\|NSExceptionDomains' 2>/dev/null \
+    | grep -Ev '(^|/)check\.sh$|\.md$')" && [[ -n "$hits" ]]; then
+    echo "App Transport Security is weakened in:" >&2
+    echo "$hits" >&2
+    exit 1
+  fi
+
+  echo "--- security: gitleaks (all history, matches redacted) ---"
+  if ! command -v gitleaks >/dev/null; then
+    echo "gitleaks not installed (brew install gitleaks)" >&2
+    exit 1
+  fi
+  gitleaks git --no-banner --redact ..
+}
+
 stage_lint() {
   echo "--- secrets are not tracked ---"
   if git ls-files --error-unmatch TrafficPro/TrafficPro/Secrets.plist >/dev/null 2>&1; then
@@ -63,6 +111,8 @@ stage_lint() {
     echo "$hits" >&2
     exit 1
   fi
+
+  stage_security
 
   echo "--- swift-format (lint, strict) ---"
   xcrun swift-format lint --strict --recursive "${SWIFT_DIRS[@]}"
@@ -167,6 +217,7 @@ stage_smoke() {
 
 case "${1:-all}" in
   lint) stage_lint ;;
+  security) stage_security ;;
   package) stage_package ;;
   build) stage_build ;;
   unit) stage_unit ;;
@@ -186,7 +237,7 @@ case "${1:-all}" in
     echo "iOS checks passed."
     ;;
   *)
-    echo "usage: ios/check.sh [all|lint|package|build|unit|smoke|ui|device]" >&2
+    echo "usage: ios/check.sh [all|lint|security|package|build|unit|smoke|ui|device]" >&2
     exit 2
     ;;
 esac

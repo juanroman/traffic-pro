@@ -10,7 +10,8 @@ Each entry is `version (build)`: the version is `MARKETING_VERSION`, the build i
 
 ## [Unreleased]
 
-Nothing yet.
+### Changed
+- `ios/check.sh lint` (and CI) now has a security stage: it fails if the Enhanced Security settings or entitlements are switched off, if an unexpected entitlement appears, if App Transport Security is weakened, or if gitleaks finds a secret in the repo history. Needs `brew install gitleaks` locally.
 
 ## 1.0 (202611210018) - 2026-11-21
 
